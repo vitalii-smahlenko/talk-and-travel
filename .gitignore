@@ -33,6 +33,4 @@ build/
 .vscode/
 
 ### db.properties ###
-db.properties
-src/main/resources/system.properties
 application-environment.properties

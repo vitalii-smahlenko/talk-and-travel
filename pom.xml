@@ -108,5 +108,6 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>talk-and-travel-app</finalName>
     </build>
 </project>

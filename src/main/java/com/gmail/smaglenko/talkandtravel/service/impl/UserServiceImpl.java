@@ -3,6 +3,7 @@ package com.gmail.smaglenko.talkandtravel.service.impl;
 import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.repository.UserRepository;
 import com.gmail.smaglenko.talkandtravel.service.UserService;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,5 +29,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findUserByEmail(String email) {
         return repository.findUserByUserEmail(email);
+    }
+
+    @Override
+    public User findById(Long userId) {
+        return repository.findById(userId).orElseThrow(
+                () -> new NoSuchElementException("Can not find user by ID: " + userId)
+        );
     }
 }

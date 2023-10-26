@@ -1,6 +1,7 @@
 package com.gmail.smaglenko.talkandtravel.service.impl;
 
 import com.gmail.smaglenko.talkandtravel.exception.AuthenticationException;
+import com.gmail.smaglenko.talkandtravel.exception.RegistrationException;
 import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.service.AuthenticationService;
 import com.gmail.smaglenko.talkandtravel.service.UserService;
@@ -17,7 +18,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public User register(String userName, String userEmail, String password) {
         Optional<User> userFromDb = userService.findUserByEmail(userEmail);
         if (userFromDb.isPresent()) {
-            throw new RuntimeException("A user with this email already exists");
+            throw new RegistrationException("A user with this email already exists");
         }
         User user = new User();
         user.setUserName(userName);

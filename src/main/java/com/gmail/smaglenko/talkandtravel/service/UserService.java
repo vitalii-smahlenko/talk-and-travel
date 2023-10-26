@@ -9,4 +9,6 @@ public interface UserService {
     User update(User user);
 
     Optional<User> findUserByEmail(String email);
+
+    User findById(Long userId);
 }

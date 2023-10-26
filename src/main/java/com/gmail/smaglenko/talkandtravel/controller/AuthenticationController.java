@@ -5,6 +5,7 @@ import com.gmail.smaglenko.talkandtravel.service.AuthenticationService;
 import com.gmail.smaglenko.talkandtravel.util.mapper.UserDtoMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/authentication")
 @RequiredArgsConstructor
+@CrossOrigin
 public class AuthenticationController {
     private final AuthenticationService authService;
     private final UserDtoMapper mapper;
@@ -27,7 +29,7 @@ public class AuthenticationController {
     }
 
     @Operation(
-            description = "Authorization a user."
+            description = "Log in a user."
     )
     @PostMapping("/login")
     public UserDto login(@RequestBody UserDto dto) {

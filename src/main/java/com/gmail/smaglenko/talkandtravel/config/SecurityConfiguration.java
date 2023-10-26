@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
+import static org.springframework.security.config.Customizer.withDefaults;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -32,15 +32,17 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf().disable()
-                .authorizeHttpRequests().requestMatchers("/swagger-ui/**",
-                        "/api/authentication/**", "/v3/**")
-                .permitAll()
-                .and()
-                .cors(Customizer.withDefaults())
+        return http
+                .csrf().disable()
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/swagger-ui/**",
+                            "/api/authentication/**", "/v3/**").permitAll();
+                    auth.anyRequest().authenticated();
+                })
+                .formLogin(withDefaults())
+                .cors(withDefaults())
                 .build();
     }
-
 
     @Bean
     public AuthenticationProvider authenticationProvider() {

@@ -40,6 +40,13 @@ public class SecurityConfiguration {
                     auth.anyRequest().authenticated();
                 })
                 .formLogin(withDefaults())
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll()
+                .and()
                 .cors(withDefaults())
                 .build();
     }

@@ -1,13 +1,14 @@
 version: 0.2
+
 phases:
-  build:
+  install:
+    runtime-versions:
+      java: corretto-17
+  pre_build:
     commands:
-      - echo Packaging JAR file...
-      - mvn clean package
+      - mvn clean
   post_build:
     commands:
-      - echo Build complete.
+      - mvn package
 artifacts:
-  files:
-    - target/talk-and-travel-app.jar
-  discard-paths: yes
+  files: target/*.jar

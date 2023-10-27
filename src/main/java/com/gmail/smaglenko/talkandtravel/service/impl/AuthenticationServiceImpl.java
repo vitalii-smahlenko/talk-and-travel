@@ -7,12 +7,14 @@ import com.gmail.smaglenko.talkandtravel.service.AuthenticationService;
 import com.gmail.smaglenko.talkandtravel.service.UserService;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public User register(String userName, String userEmail, String password) {
@@ -31,7 +33,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public User login(String userEmail, String password) {
         Optional<User> userFromDb = userService.findUserByEmail(userEmail);
         if (userFromDb.isEmpty()
-                || userFromDb.get().getPassword().equals(password)) {
+                || !passwordEncoder.matches(password, userFromDb.get().getPassword())) {
             throw new AuthenticationException("Incorrect username or password!!!");
         }
         return userFromDb.get();

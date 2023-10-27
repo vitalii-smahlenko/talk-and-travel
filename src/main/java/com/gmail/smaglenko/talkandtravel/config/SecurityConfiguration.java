@@ -48,6 +48,8 @@ public class SecurityConfiguration {
                 .permitAll()
                 .and()
                 .cors(withDefaults())
+                .httpBasic()
+                .and()
                 .build();
     }
 

@@ -1,4 +1,3 @@
-FROM 8-alpine3.17-jdk
-ARG JAR_FILE=build/libs/*.jar
-COPY ${JAR_FILE} /app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+FROM openjdk:17-alpine
+COPY target/talk-and-travel-app.jar talk-and-travel-app.jar
+ENTRYPOINT ["java","-jar","talk-and-travel-app.jar app"]

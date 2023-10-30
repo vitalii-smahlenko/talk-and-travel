@@ -3,17 +3,21 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - echo Installing Java 17...
-      - yum install java-17-amazon-corretto-devel -y
-      - alternatives --set java /usr/lib/jvm/java-17-amazon-corretto.aarch64/bin/java
+      - echo "Running pre-build commands..."
+      - mvn clean install
+
   build:
     commands:
-      - echo Building...
-      - mvn clean package
+      - echo "Building the Docker image..."
+      - docker build -f src/main/docker/Dockerfile -t t-and-t-2 .
+
   post_build:
     commands:
-      - mvn Build completed successfully!
+      - echo "Pushing the Docker image..."
+      - docker push t-and-t-2
+      - aws elasticbeanstalk create-application-version --application-name t-and-t-2 --version-label 0.0.2 --source-bundle file://target/spring-boot.jar
+      - aws elasticbeanstalk update-environment --application-name t-and-t-2 --environment-name T-and-t-2-env --version-label <version_label>
+
 artifacts:
   files:
-    - target/talk-and-travel-app.jar
-  discard-paths: yes
+    - target/*.jar

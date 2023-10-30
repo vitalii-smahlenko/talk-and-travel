@@ -26,13 +26,15 @@ public class UserController {
             description = "Update a user."
     )
     @PutMapping()
-    public UserDto update(@RequestBody UserDto dto) {
-        return userDtoMapper.mapToDto(userService.update(userDtoMapper.mapToModel(dto)));
+    public ResponseEntity<UserDto> update(@RequestBody UserDto dto) {
+        UserDto user = userDtoMapper.mapToDto(userService.update(userDtoMapper.mapToModel(dto)));
+        return ResponseEntity.ok().body(user);
     }
 
     @GetMapping("/{userId}")
-    public UserDto findById(@PathVariable Long userId) {
-        return userDtoMapper.mapToDto(userService.findById(userId));
+    public ResponseEntity<UserDto> findById(@PathVariable Long userId) {
+        UserDto user = userDtoMapper.mapToDto(userService.findById(userId));
+        return ResponseEntity.ok().body(user);
     }
 
     @Operation(

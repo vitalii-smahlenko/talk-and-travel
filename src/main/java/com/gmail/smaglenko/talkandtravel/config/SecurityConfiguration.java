@@ -5,8 +5,6 @@ import com.gmail.smaglenko.talkandtravel.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -40,13 +38,13 @@ public class SecurityConfiguration {
                     auth.anyRequest().authenticated();
                 })
                 .formLogin(withDefaults())
-                .logout()
+                /*.logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()
-                .and()
+                .and()*/
                 .cors(withDefaults())
                 .httpBasic()
                 .and()

@@ -5,6 +5,7 @@ import com.gmail.smaglenko.talkandtravel.service.AuthenticationService;
 import com.gmail.smaglenko.talkandtravel.util.mapper.UserDtoMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,9 +23,10 @@ public class AuthenticationController {
             description = "Register a user."
     )
     @PostMapping("/register")
-    public UserDto register(@RequestBody UserDto dto) {
-        return mapper.mapToDto(authService
+    public ResponseEntity<UserDto> register(@RequestBody UserDto dto) {
+        UserDto user = mapper.mapToDto(authService
                 .register(dto.getUserName(), dto.getUserEmail(), dto.getPassword()));
+        return ResponseEntity.ok().body(user);
     }
 
     @Operation(
@@ -32,7 +34,7 @@ public class AuthenticationController {
     )
     @PostMapping("/login")
     public ResponseEntity<UserDto> login(@RequestBody UserDto dto) {
-        return ResponseEntity.ok()
-                .body(mapper.mapToDto(authService.login(dto.getUserEmail(), dto.getPassword())));
+        UserDto user = mapper.mapToDto(authService.login(dto.getUserEmail(), dto.getPassword()));
+        return ResponseEntity.ok().body(user);
     }
 }

@@ -38,13 +38,13 @@ public class SecurityConfiguration {
                     auth.anyRequest().authenticated();
                 })
                 .formLogin(withDefaults())
-                .logout()
+                /*.logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()
-                .and()
+                .and()*/
                 .cors(withDefaults())
                 .httpBasic()
                 .and()

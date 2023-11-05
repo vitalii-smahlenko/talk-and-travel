@@ -4,9 +4,10 @@ import com.gmail.smaglenko.talkandtravel.model.dto.UserDto;
 import com.gmail.smaglenko.talkandtravel.service.AuthenticationService;
 import com.gmail.smaglenko.talkandtravel.util.mapper.UserDtoMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,22 +20,28 @@ public class AuthenticationController {
     private final AuthenticationService authService;
     private final UserDtoMapper mapper;
 
-    @Operation(
-            description = "Register a user."
-    )
+    @Operation(description = "Register a user.")
     @PostMapping("/register")
-    public ResponseEntity<UserDto> register(@RequestBody UserDto dto) {
-        UserDto user = mapper.mapToDto(authService
-                .register(dto.getUserName(), dto.getUserEmail(), dto.getPassword()));
-        return ResponseEntity.ok().body(user);
+    public ResponseEntity<?> register(@Valid @RequestBody UserDto dto,
+                                      BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity
+                    .badRequest().body("Validation errors: " + bindingResult.getAllErrors());
+        }
+        UserDto user = mapper.mapToDto(
+                authService.register(dto.getUserName(), dto.getUserEmail(), dto.getPassword())
+        );
+        return ResponseEntity.ok(user);
     }
 
-    @Operation(
-            description = "Log in a user."
-    )
+    @Operation(description = "Log in a user.")
     @PostMapping("/login")
-    public ResponseEntity<UserDto> login(@RequestBody UserDto dto) {
+    public ResponseEntity<?> login(@Valid @RequestBody UserDto dto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity
+                    .badRequest().body("Validation errors: " + bindingResult.getAllErrors());
+        }
         UserDto user = mapper.mapToDto(authService.login(dto.getUserEmail(), dto.getPassword()));
-        return ResponseEntity.ok().body(user);
+        return ResponseEntity.ok(user);
     }
 }

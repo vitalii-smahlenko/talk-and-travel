@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,17 +40,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setUserName(userName);
         user.setUserEmail(userEmail);
         user.setPassword(password);
+        user.setLoggedId(false);
         return userService.save(user);
     }
 
     @Override
+    @Transactional
     public User login(String userEmail, String password) {
         Optional<User> userFromDb = userService.findUserByEmail(userEmail);
         if (userFromDb.isEmpty()
                 || !passwordEncoder.matches(password, userFromDb.get().getPassword())) {
             throw new AuthenticationException("Incorrect username or password!!!");
         }
-        return userFromDb.get();
+        userFromDb.get().setLoggedId(true);
+        return userService.save(userFromDb.get());
     }
 
     private boolean isValidPassword(String password) {

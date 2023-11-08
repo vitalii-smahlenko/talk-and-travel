@@ -34,3 +34,5 @@ build/
 
 ### db.properties ###
 application-environment.properties
+
+http-request.http

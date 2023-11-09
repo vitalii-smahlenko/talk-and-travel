@@ -1,8 +1,14 @@
 package com.gmail.smaglenko.talkandtravel;
 
+import com.gmail.smaglenko.talkandtravel.model.Role;
+import com.gmail.smaglenko.talkandtravel.model.Role.RoleName;
+import com.gmail.smaglenko.talkandtravel.model.User;
+import com.gmail.smaglenko.talkandtravel.service.RoleService;
+import com.gmail.smaglenko.talkandtravel.service.UserService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import java.util.List;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +36,24 @@ public class TalkAndTravelApplication {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    /*@Bean
+    CommandLineRunner run(UserService userService, RoleService roleService) {
+        return args -> {
+            Role role = roleService.findByRoleName(RoleName.ADMIN);
+            if (role == null) {
+                role = new Role();
+                role.setRoleName(RoleName.ADMIN);
+                role = roleService.save(role);
+            }
+            User admin = new User();
+            admin.setUserName("admin");
+            admin.setUserEmail("admin@t2.com");
+            admin.setPassword("admin");
+            admin.getRoles().add(role);
+            userService.save(admin);
+        };
+    }*/
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

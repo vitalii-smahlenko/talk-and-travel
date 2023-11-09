@@ -22,7 +22,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @OpenAPIDefinition(
         info = @Info(
                 title = "Talk&Travel project",
-                version = "0.0.1",
+                version = "0.0.2",
                 description = "This is a simple chat application for people who like to travel, "
                         + "written in Java using Spring Boot."
         )

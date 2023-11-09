@@ -1,13 +1,16 @@
 package com.gmail.smaglenko.talkandtravel.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.Data;
 
 @Data
@@ -20,10 +23,12 @@ public class User {
     @Size(min = 2, max = 16, message = "The username must be at least 2 "
             + "and no more than 16 characters long")
     private String userName;
+    @Column(nullable = false)
     private String password;
-    @NotEmpty
+    @Column(nullable = false)
     private String userEmail;
-    private Boolean loggedId;
+    @ManyToMany
+    private Set<Role> roles = new HashSet<>();
     @OneToOne
     private Avatar avatar;
 }

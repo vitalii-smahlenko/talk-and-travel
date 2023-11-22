@@ -7,13 +7,14 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class ApiExceptionHandler {
     @ExceptionHandler({AuthenticationException.class, RegistrationException.class,
-            NoSuchElementException.class})
+            NoSuchElementException.class, UsernameNotFoundException.class})
     public ResponseEntity<Object> handleException(Exception e) {
         HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         ApiException apiException = new ApiException(

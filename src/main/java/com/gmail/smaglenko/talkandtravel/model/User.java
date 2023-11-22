@@ -2,20 +2,25 @@ package com.gmail.smaglenko.talkandtravel.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Table(name = "users")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,11 +29,11 @@ public class User {
             + "and no more than 16 characters long")
     private String userName;
     @Column(nullable = false)
-    private String password;
-    @Column(nullable = false)
     private String userEmail;
-    @ManyToMany
-    private Set<Role> roles = new HashSet<>();
+    @Column(nullable = false)
+    private String password;
     @OneToOne
     private Avatar avatar;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

@@ -1,5 +1,6 @@
 package com.gmail.smaglenko.talkandtravel.controller;
 
+import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.model.dto.UserDto;
 import com.gmail.smaglenko.talkandtravel.service.UserService;
 import com.gmail.smaglenko.talkandtravel.util.mapper.UserDtoMapper;
@@ -27,7 +28,9 @@ public class UserController {
     )
     @PutMapping()
     public ResponseEntity<UserDto> update(@RequestBody UserDto dto) {
-        UserDto user = userDtoMapper.mapToDto(userService.update(userDtoMapper.mapToModel(dto)));
+        User user1 = userDtoMapper.mapToModel(dto);
+        User user2 = userService.update(user1);
+        UserDto user = userDtoMapper.mapToDto(user2);
         return ResponseEntity.ok().body(user);
     }
 

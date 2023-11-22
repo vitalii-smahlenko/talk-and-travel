@@ -4,6 +4,7 @@ import com.gmail.smaglenko.talkandtravel.model.User;
 import java.util.Optional;
 
 public interface UserService {
+
     User save(User user);
 
     User update(User user);

@@ -3,15 +3,14 @@ package com.gmail.smaglenko.talkandtravel.service.impl;
 import com.gmail.smaglenko.talkandtravel.exception.AuthenticationException;
 import com.gmail.smaglenko.talkandtravel.exception.RegistrationException;
 import com.gmail.smaglenko.talkandtravel.model.Role;
-import com.gmail.smaglenko.talkandtravel.model.Role.RoleName;
 import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.service.AuthenticationService;
-import com.gmail.smaglenko.talkandtravel.service.RoleService;
 import com.gmail.smaglenko.talkandtravel.service.UserService;
 import com.gmail.smaglenko.talkandtravel.util.validator.PasswordValidator;
 import com.gmail.smaglenko.talkandtravel.util.validator.UserEmailValidator;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +22,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserEmailValidator emailValidator;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-    private final RoleService roleService;
+    private final AuthenticationManager authenticationManager;
 
     @Override
     @Transactional
@@ -39,18 +38,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (userFromDb.isPresent()) {
             throw new RegistrationException("A user with this email already exists");
         }
-        Role role = roleService.findByRoleName(RoleName.USER);
-        if (role == null) {
-            role = new Role();
-            role.setRoleName(RoleName.USER);
-            role = roleService.save(role);
-        }
-        User user = new User();
-        user.setUserName(userName);
-        user.setUserEmail(userEmail);
-        user.setPassword(password);
-        user.getRoles().add(role);
-        return userService.save(user);
+        return userService.save(
+                User.builder()
+                        .userName(userName)
+                        .userEmail(userEmail)
+                        .password(password)
+                        .role(Role.USER)
+                        .build()
+        );
     }
 
     @Override
@@ -61,6 +56,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 || !passwordEncoder.matches(password, userFromDb.get().getPassword())) {
             throw new AuthenticationException("Incorrect username or password!!!");
         }
-        return userService.save(userFromDb.get());
+        return userFromDb.get();
     }
 }

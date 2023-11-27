@@ -31,17 +31,5 @@ public class ApplicationConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration cors = new CorsConfiguration();
-        cors.setAllowedOrigins(List.of("http://localhost:3001", "http://localhost:3000"));
-        cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"));
-        cors.setAllowedHeaders(List.of("X-Requested-With", "Origin", "Content-Type", "Accept",
-                "Authorization"));
-        cors.setExposedHeaders(List.of("Content-Type", "Cache-Control", "Content-Language",
-                "Content-Length", "Last-Modified"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", cors);
-        return source;
-    }
+
 }

@@ -25,7 +25,7 @@ public class AuthenticationController {
     @Operation(description = "Register a user.")
     @PostMapping("/register")
     public ResponseEntity<AuthDto> register(@RequestBody UserDto dto) {
-        User user = authService.register(dto.getUserName(), dto.getUserEmail(), dto.getPassword());
+        User user = authService.register(mapper.mapToModel(dto));
         String token = jwtService.generateToken(user);
         UserDto userDto = mapper.mapToDto(user);
         AuthDto authDto = AuthDto.builder()
@@ -47,4 +47,6 @@ public class AuthenticationController {
                 .build();
         return ResponseEntity.ok(authDto);
     }
+
+
 }

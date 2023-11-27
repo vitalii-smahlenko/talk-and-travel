@@ -2,11 +2,9 @@ package com.gmail.smaglenko.talkandtravel;
 
 import com.gmail.smaglenko.talkandtravel.model.Role;
 import com.gmail.smaglenko.talkandtravel.model.User;
-import com.gmail.smaglenko.talkandtravel.repository.UserRepository;
 import com.gmail.smaglenko.talkandtravel.service.UserService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,8 +12,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;;
 
 @SpringBootApplication(scanBasePackages = "com.gmail.smaglenko")
 @OpenAPIDefinition(

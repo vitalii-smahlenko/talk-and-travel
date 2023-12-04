@@ -2,11 +2,9 @@ package com.gmail.smaglenko.talkandtravel.service.impl;
 
 import com.gmail.smaglenko.talkandtravel.exception.AuthenticationException;
 import com.gmail.smaglenko.talkandtravel.exception.RegistrationException;
-import com.gmail.smaglenko.talkandtravel.model.Avatar;
 import com.gmail.smaglenko.talkandtravel.model.Role;
 import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.service.AuthenticationService;
-import com.gmail.smaglenko.talkandtravel.service.AvatarService;
 import com.gmail.smaglenko.talkandtravel.service.UserService;
 import com.gmail.smaglenko.talkandtravel.util.validator.PasswordValidator;
 import com.gmail.smaglenko.talkandtravel.util.validator.UserEmailValidator;
@@ -22,7 +20,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordValidator passwordValidator;
     private final UserEmailValidator emailValidator;
     private final UserService userService;
-    private final AvatarService avatarService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -39,15 +36,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (userFromDb.isPresent()) {
             throw new RegistrationException("A user with this email already exists");
         }
-        Avatar avatar = avatarService.save(Avatar.builder()
-                .content(new byte[]{(byte) user.getUserName().charAt(0)})
-                .build());
         return userService.save(User.builder()
                 .userName(user.getUserName())
                 .userEmail(user.getUserEmail())
                 .password(user.getPassword())
                 .role(Role.USER)
-                .avatar(avatar)
                 .build());
     }
 

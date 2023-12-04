@@ -24,11 +24,17 @@ public class AvatarServiceImpl implements AvatarService {
         if (file.getSize() > 1000000 || !file.getContentType().equals("image/jpeg")) {
             throw new IllegalArgumentException("Invalid avatar file. ");
         }
+        char content = user.getUserName().charAt(0);
         Avatar avatar = new Avatar();
-        avatar.setUser(user);
+
         fileReaderService.readFile(file, avatar);
         Avatar saved = repository.save(avatar);
         user.setAvatar(saved);
         userService.update(user);
+    }
+
+    @Override
+    public Avatar save(Avatar avatar) {
+        return repository.save(avatar);
     }
 }

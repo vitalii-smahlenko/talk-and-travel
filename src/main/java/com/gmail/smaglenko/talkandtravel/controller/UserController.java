@@ -1,16 +1,13 @@
 package com.gmail.smaglenko.talkandtravel.controller;
 
-import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.model.dto.UserDto;
 import com.gmail.smaglenko.talkandtravel.service.UserService;
 import com.gmail.smaglenko.talkandtravel.util.mapper.UserDtoMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,9 +25,7 @@ public class UserController {
     )
     @PutMapping()
     public ResponseEntity<UserDto> update(@RequestBody UserDto dto) {
-        User user1 = userDtoMapper.mapToModel(dto);
-        User user2 = userService.update(user1);
-        UserDto user = userDtoMapper.mapToDto(user2);
+        UserDto user = userDtoMapper.mapToDto(userService.update(userDtoMapper.mapToModel(dto)));
         return ResponseEntity.ok().body(user);
     }
 
@@ -38,14 +33,5 @@ public class UserController {
     public ResponseEntity<UserDto> findById(@PathVariable Long userId) {
         UserDto user = userDtoMapper.mapToDto(userService.findById(userId));
         return ResponseEntity.ok().body(user);
-    }
-
-    @Operation(
-            description = "Logout the current user."
-    )
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout() {
-        SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
-        return ResponseEntity.noContent().build();
     }
 }

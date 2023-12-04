@@ -1,5 +1,6 @@
 package com.gmail.smaglenko.talkandtravel.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -32,7 +33,7 @@ public class User {
     private String userEmail;
     @Column(nullable = false)
     private String password;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Avatar avatar;
     @Enumerated(EnumType.STRING)
     private Role role;

@@ -10,6 +10,5 @@ public interface UserDtoMapper {
     @Mapping(target = "password", ignore = true)
     UserDto mapToDto(User user);
 
-    @Mapping(target = "password", ignore = true)
     User mapToModel(UserDto dto);
 }

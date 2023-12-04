@@ -9,6 +9,7 @@ import com.gmail.smaglenko.talkandtravel.util.mapper.UserDtoMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,13 +26,8 @@ public class AuthenticationController {
     @Operation(description = "Register a user.")
     @PostMapping("/register")
     public ResponseEntity<AuthDto> register(@RequestBody UserDto dto) {
-        User user = authService.register(dto.getUserName(), dto.getUserEmail(), dto.getPassword());
-        String token = jwtService.generateToken(user);
-        UserDto userDto = mapper.mapToDto(user);
-        AuthDto authDto = AuthDto.builder()
-                .token(token)
-                .userDto(userDto)
-                .build();
+        User user = authService.register(mapper.mapToModel(dto));
+        AuthDto authDto = createAuthDto(user);
         return ResponseEntity.ok(authDto);
     }
 
@@ -39,12 +35,25 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<AuthDto> login(@RequestBody UserDto dto) {
         User user = authService.login(dto.getUserEmail(), dto.getPassword());
+        AuthDto authDto = createAuthDto(user);
+        return ResponseEntity.ok(authDto);
+    }
+
+    @Operation(
+            description = "Logout the current user."
+    )
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+        return ResponseEntity.noContent().build();
+    }
+
+    private AuthDto createAuthDto(User user) {
         String token = jwtService.generateToken(user);
         UserDto userDto = mapper.mapToDto(user);
-        AuthDto authDto = AuthDto.builder()
+        return AuthDto.builder()
                 .token(token)
                 .userDto(userDto)
                 .build();
-        return ResponseEntity.ok(authDto);
     }
 }

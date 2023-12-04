@@ -1,6 +1,5 @@
 package com.gmail.smaglenko.talkandtravel.security;
 
-import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,9 +14,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
-        User user = userRepository.findByUserEmail(userEmail).orElseThrow(
-                () -> new UsernameNotFoundException("User not found")
-        );
-        return new CustomUserDetails(user);
+        return userRepository.findByUserEmail(userEmail)
+                .map(CustomUserDetails::new)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }

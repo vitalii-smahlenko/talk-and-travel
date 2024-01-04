@@ -8,9 +8,11 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,4 +41,6 @@ public class User {
     private Role role;
     @Size(min = 10, max = 1000, message = "Maximum number of characters for About 1000")
     private String about;
+    @OneToMany(mappedBy = "user")
+    private List<Participant> participatedCountries;
 }

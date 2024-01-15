@@ -47,7 +47,25 @@ public class CountryServiceImpl implements CountryService {
         var existingParticipant = participantService.findByUser(user)
                 .orElseGet(() -> participantService.create(user));
         joinCountry(existingCountry, existingParticipant);
-        return save(existingCountry);
+        Country savedCountry = save(existingCountry);
+        return detachFields(savedCountry);
+    }
+
+    private Country detachFields(Country country) {
+        return Country.builder()
+                .id(country.getId())
+                .name(country.getName())
+                .flagCode(country.getFlagCode())
+                .build();
+    }
+
+    private void joinCountry(Country country, Participant participant) {
+        if (!country.getParticipants().contains(participant)) {
+            country.getParticipants().add(participant);
+        }
+        if (!participant.getCountries().contains(country)) {
+            participant.getCountries().add(country);
+        }
     }
 
     private Country create(Country country) {
@@ -58,13 +76,5 @@ public class CountryServiceImpl implements CountryService {
                 .participants(new ArrayList<>())
                 .build();
     }
-
-    private void joinCountry(Country country, Participant participant) {
-        if(!country.getParticipants().contains(participant)){
-            country.getParticipants().add(participant);
-        }
-        if(!participant.getCountries().contains(country)){
-            participant.getCountries().add(country);
-        }
-    }
 }
+

@@ -27,6 +27,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Country {
+    public Country(Long id, String name, String flagCode) {
+        this.id = id;
+        this.name = name;
+        this.flagCode = flagCode;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

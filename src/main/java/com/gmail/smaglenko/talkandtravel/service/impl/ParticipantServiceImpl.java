@@ -1,10 +1,12 @@
 package com.gmail.smaglenko.talkandtravel.service.impl;
 
+import com.gmail.smaglenko.talkandtravel.model.Country;
 import com.gmail.smaglenko.talkandtravel.model.Participant;
 import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.repository.ParticipantRepository;
 import com.gmail.smaglenko.talkandtravel.service.ParticipantService;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +23,6 @@ public class ParticipantServiceImpl implements ParticipantService {
     }
 
     @Override
-    public Participant findById(Long id) {
-        return repository.findById(id).orElseThrow(
-                () -> new NoSuchElementException("Can not find participant by ID: " + id)
-        );
-    }
-
-    @Override
     public Optional<Participant> findByUser(User user) {
         return repository.findByUser(user);
     }
@@ -39,5 +34,12 @@ public class ParticipantServiceImpl implements ParticipantService {
                 .countries(new ArrayList<>())
                 .build();
         return save(participant);
+    }
+
+    @Override
+    public List<Country> findCountriesByUser(Long userId) {
+        return repository.findCountriesByUserId(userId).orElseThrow(
+                () -> new NoSuchElementException("The User is not a participant of any Country")
+        );
     }
 }

@@ -23,7 +23,9 @@ public class AuthenticationController {
     private final UserDtoMapper mapper;
     private final JwtService jwtService;
 
-    @Operation(description = "Register a user.")
+    @Operation(
+            description = "Register a user."
+    )
     @PostMapping("/register")
     public ResponseEntity<AuthDto> register(@RequestBody UserDto dto) {
         User user = authService.register(mapper.mapToModel(dto));
@@ -31,7 +33,9 @@ public class AuthenticationController {
         return ResponseEntity.ok(authDto);
     }
 
-    @Operation(description = "Log in a user.")
+    @Operation(
+            description = "Log in a user."
+    )
     @PostMapping("/login")
     public ResponseEntity<AuthDto> login(@RequestBody UserDto dto) {
         User user = authService.login(dto.getUserEmail(), dto.getPassword());

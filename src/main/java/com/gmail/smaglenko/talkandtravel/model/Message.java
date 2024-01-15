@@ -16,9 +16,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
+
 @Entity
 @Table(name = "messages")
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,15 +30,16 @@ public class Message {
     @Size(min = 2, max = 1000, message = "The maximum number of characters for a message is 1000")
     private String content;
     @Column(nullable = false)
-    private LocalDateTime creationDate;
+    private LocalDateTime creationDate = LocalDateTime.now();
     @ManyToOne
     @JoinColumn(name = "country_id", nullable = false)
     private Country country;
     @ManyToOne
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
-    @PrePersist
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    /*@PrePersist
     protected void onCreate() {
         creationDate = LocalDateTime.now();
-    }
+    }*/
 }

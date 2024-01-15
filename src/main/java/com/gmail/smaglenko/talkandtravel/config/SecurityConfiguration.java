@@ -1,9 +1,9 @@
 package com.gmail.smaglenko.talkandtravel.config;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import static org.springframework.http.HttpMethod.POST;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -37,11 +37,13 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL).permitAll()
-                                .requestMatchers(GET,"/").permitAll()
-                                .requestMatchers(PUT, "/api/users")
-                                .hasAnyAuthority(USER.name())
+                                .requestMatchers( "/api/country/").hasAnyRole(USER.name())
+                                .requestMatchers(GET, "/")
+                                .permitAll()
+                                .requestMatchers(PUT, "/api/users/")
+                                .hasAnyRole(USER.name())
                                 .requestMatchers(GET, "/api/users/")
-                                .hasAnyRole("USER")
+                                .hasAnyRole(USER.name())
                                 .anyRequest()
                                 .authenticated()
                 )

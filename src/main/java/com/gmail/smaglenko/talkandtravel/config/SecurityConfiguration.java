@@ -42,7 +42,7 @@ public class SecurityConfiguration {
                                 .permitAll()
                                 .requestMatchers(PUT, "/api/users/")
                                 .hasAnyRole(USER.name())
-                                .requestMatchers(GET, "/api/users/")
+                                .requestMatchers(GET, "/api/users/","/api/participants/")
                                 .hasAnyRole(USER.name())
                                 .anyRequest()
                                 .authenticated()

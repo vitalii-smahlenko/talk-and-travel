@@ -21,7 +21,8 @@ public class ApplicationConfig {
             = Arrays.asList(
             "http://localhost:3001",
             "http://localhost:3000",
-            "https://cheredniknatalya.github.io"
+            "https://cheredniknatalya.github.io",
+            "https://reginavarybrus.github.io"
     );
     private final List<String> ALLOWED_METHODS
             = Arrays.asList(

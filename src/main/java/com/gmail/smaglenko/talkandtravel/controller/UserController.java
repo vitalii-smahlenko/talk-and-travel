@@ -2,6 +2,7 @@ package com.gmail.smaglenko.talkandtravel.controller;
 
 import com.gmail.smaglenko.talkandtravel.model.dto.UserDto;
 import com.gmail.smaglenko.talkandtravel.service.UserService;
+import com.gmail.smaglenko.talkandtravel.util.constants.ApiPathConstants;
 import com.gmail.smaglenko.talkandtravel.util.mapper.UserDtoMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping(ApiPathConstants.API_BASE_PATH + "/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;

@@ -11,10 +11,12 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Entity
@@ -30,7 +32,8 @@ public class Message {
     @Size(min = 2, max = 1000, message = "The maximum number of characters for a message is 1000")
     private String content;
     @Column(nullable = false)
-    private LocalDateTime creationDate = LocalDateTime.now();
+    @Setter(AccessLevel.NONE)
+    private LocalDateTime creationDate;
     @ManyToOne
     @JoinColumn(name = "country_id", nullable = false)
     private Country country;
@@ -38,8 +41,8 @@ public class Message {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    /*@PrePersist
+    @PrePersist
     protected void onCreate() {
         creationDate = LocalDateTime.now();
-    }*/
+    }
 }

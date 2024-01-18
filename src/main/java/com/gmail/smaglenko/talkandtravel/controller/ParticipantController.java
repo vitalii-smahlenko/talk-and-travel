@@ -3,6 +3,7 @@ package com.gmail.smaglenko.talkandtravel.controller;
 import com.gmail.smaglenko.talkandtravel.model.Country;
 import com.gmail.smaglenko.talkandtravel.model.dto.CountryDto;
 import com.gmail.smaglenko.talkandtravel.service.ParticipantService;
+import com.gmail.smaglenko.talkandtravel.util.constants.ApiPathConstants;
 import com.gmail.smaglenko.talkandtravel.util.mapper.CountryDtoMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/participants")
+@RequestMapping(ApiPathConstants.API_BASE_PATH + "/participants")
 @RequiredArgsConstructor
 public class ParticipantController {
     private final ParticipantService participantService;

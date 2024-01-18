@@ -37,12 +37,12 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL).permitAll()
-                                .requestMatchers( "/api/country/").hasAnyRole(USER.name())
-                                .requestMatchers(GET, "/")
-                                .permitAll()
+                                .requestMatchers(POST, "/api/countries/", "/api/messages/")
+                                .hasAnyRole(USER.name())
                                 .requestMatchers(PUT, "/api/users/")
                                 .hasAnyRole(USER.name())
-                                .requestMatchers(GET, "/api/users/","/api/participants/")
+                                .requestMatchers(GET, "/api/users/", "/api/participants/",
+                                        "/api/countries/", "/api/messages/")
                                 .hasAnyRole(USER.name())
                                 .anyRequest()
                                 .authenticated()

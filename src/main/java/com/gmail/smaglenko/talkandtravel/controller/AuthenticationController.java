@@ -5,6 +5,7 @@ import com.gmail.smaglenko.talkandtravel.model.dto.AuthDto;
 import com.gmail.smaglenko.talkandtravel.model.dto.UserDto;
 import com.gmail.smaglenko.talkandtravel.service.AuthenticationService;
 import com.gmail.smaglenko.talkandtravel.service.JwtService;
+import com.gmail.smaglenko.talkandtravel.util.constants.ApiPathConstants;
 import com.gmail.smaglenko.talkandtravel.util.mapper.UserDtoMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/authentication")
+@RequestMapping(ApiPathConstants.API_BASE_PATH + "/authentication")
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationService authService;

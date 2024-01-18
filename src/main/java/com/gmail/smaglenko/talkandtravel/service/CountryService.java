@@ -7,7 +7,7 @@ public interface CountryService {
 
     Country save(Country country);
 
-    Country findByName(String name);
+    Country findById(Long countryId);
 
-    Country findById(Long id);
+    Long countUsersInCountry(Long countryId);
 }

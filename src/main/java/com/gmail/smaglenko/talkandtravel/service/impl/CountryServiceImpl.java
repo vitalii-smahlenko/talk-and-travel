@@ -25,17 +25,15 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public Country findByName(String name) {
-        return repository.findByName(name).orElseThrow(
-                () -> new NoSuchElementException("Can not find country " + name)
+    public Country findById(Long countryId) {
+        return repository.findById(countryId).orElseThrow(
+                () -> new NoSuchElementException("Can not find Country by id " + countryId)
         );
     }
 
     @Override
-    public Country findById(Long id) {
-        return repository.findById(id).orElseThrow(
-                () -> new NoSuchElementException("Can not find country by ID: " + id)
-        );
+    public Long countUsersInCountry(Long countryId) {
+        return repository.countUsersInCountry(countryId);
     }
 
     @Override
@@ -48,10 +46,10 @@ public class CountryServiceImpl implements CountryService {
                 .orElseGet(() -> participantService.create(user));
         joinCountry(existingCountry, existingParticipant);
         Country savedCountry = save(existingCountry);
-        return detachFields(savedCountry);
+        return detachCountryFields(savedCountry);
     }
 
-    private Country detachFields(Country country) {
+    private Country detachCountryFields(Country country) {
         return Country.builder()
                 .id(country.getId())
                 .name(country.getName())

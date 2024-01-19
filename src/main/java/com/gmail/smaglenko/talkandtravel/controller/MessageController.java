@@ -7,11 +7,6 @@ import com.gmail.smaglenko.talkandtravel.service.MessageService;
 import com.gmail.smaglenko.talkandtravel.util.constants.ApiPathConstants;
 import com.gmail.smaglenko.talkandtravel.util.mapper.MessageDtoMapper;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +26,7 @@ public class MessageController {
 
     @Operation(
             description = "This method finds all messages within one country. "
-                    + "The messages that were added last are displayed first.",
+                    + "The messages that were added last are displayed first."
     )
     @GetMapping("/{countryId}")
     public ResponseEntity<List<MessageDto>> findByCountryIdOrderByCreationDateDesc(

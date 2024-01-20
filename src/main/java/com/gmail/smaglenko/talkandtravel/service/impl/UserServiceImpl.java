@@ -24,16 +24,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(User user) {
-        Optional<User> userByEmail = findUserByEmail(user.getUserEmail());
-        if(userByEmail.isPresent()){
-            throw new AuthenticationException("A user with this email already exists");
-        }
-        User userFromDb = repository.findById(user.getId())
-                .orElseThrow(
-                        () -> new NoSuchElementException("Can not find user by ID: " + user.getId())
-                );
-        user.setPassword(userFromDb.getPassword());
-        user.setRole(userFromDb.getRole());
+        var userByEmail = findUserByEmail(user.getUserEmail());
+        isEmailAlreadyExist(userByEmail);
+        var existingUser = getExistingUser(user);
+        user.setPassword(existingUser.getPassword());
+        user.setRole(existingUser.getRole());
         return repository.save(user);
     }
 
@@ -47,5 +42,18 @@ public class UserServiceImpl implements UserService {
         return repository.findById(userId).orElseThrow(
                 () -> new NoSuchElementException("Can not find user by ID: " + userId)
         );
+    }
+
+    private void isEmailAlreadyExist(Optional<User> userByEmail) {
+        if(userByEmail.isPresent()){
+            throw new AuthenticationException("A user with this email already exists");
+        }
+    }
+
+    private User getExistingUser(User user) {
+        return repository.findById(user.getId())
+                .orElseThrow(
+                        () -> new NoSuchElementException("Can not find user by ID: " + user.getId())
+                );
     }
 }

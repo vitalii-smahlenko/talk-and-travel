@@ -43,4 +43,6 @@ public class User {
     private String about;
     @OneToMany(mappedBy = "user")
     private List<Participant> participatedCountries;
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
 }

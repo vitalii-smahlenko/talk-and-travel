@@ -28,10 +28,10 @@ public class MessageServiceImpl implements MessageService {
     @Override
     @Transactional
     public Message create(MessageRequest messageRequest) {
-        User existingUser = userService.findById(messageRequest.getSenderId());
-        Country existingCountry = countryService.findById(messageRequest.getCountryId());
-        Message message = buildMessage(messageRequest.getContent(), existingUser, existingCountry);
-        Message savedMessage = save(message);
+        var existingUser = userService.findById(messageRequest.getSenderId());
+        var existingCountry = countryService.findById(messageRequest.getCountryId());
+        var message = buildMessage(messageRequest.getContent(), existingUser, existingCountry);
+        var savedMessage = save(message);
         existingCountry.getMessages().add(savedMessage);
         countryService.save(existingCountry);
         return detachMessageFields(savedMessage);

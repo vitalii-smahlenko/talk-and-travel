@@ -16,7 +16,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @RequiredArgsConstructor
-public class ApplicationConfig {
+public class ApplicationConfiguration {
     private final List<String> ALLOWED_ORIGINS
             = Arrays.asList(
             "http://localhost:3001",

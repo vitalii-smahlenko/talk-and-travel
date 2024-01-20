@@ -1,6 +1,7 @@
 package com.gmail.smaglenko.talkandtravel.config;
 
 import com.gmail.smaglenko.talkandtravel.service.JwtService;
+import com.gmail.smaglenko.talkandtravel.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +23,7 @@ import org.thymeleaf.util.StringUtils;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final TokenService tokenService;
 
     @Override
     protected void doFilterInternal(
@@ -41,7 +43,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (userEmail != null
                 && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-            if (jwtService.isTokenValid(jwt, userDetails)) {
+            var isTokenValid
+                    = tokenService.findByToken(jwt)
+                    .map(t -> !t.isRevoked() && !t.isExpired())
+                    .orElse(false);
+            if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,

@@ -29,17 +29,17 @@ public class CountryController {
     @PostMapping("/{userID}")
     public ResponseEntity<CountryDto> createOrUpdateCountryForUser(
             @RequestBody CountryDto countryDto, @PathVariable Long userID) {
-        Country model = dtoMapper.mapToModel(countryDto);
-        Country country = countryService.createOrUpdateCountryForUser(model, userID);
-        CountryDto dto = dtoMapper.mapToDto(country);
-        return ResponseEntity.ok().body(dto);
+        var requestedCountry = dtoMapper.mapToModel(countryDto);
+        var country = countryService.createOrUpdateCountryForUser(requestedCountry, userID);
+        var responseCountryDto = dtoMapper.mapToDto(country);
+        return ResponseEntity.ok().body(responseCountryDto);
     }
     @Operation(
             description = "Get the quantity of participants in the country"
     )
     @GetMapping("/user-count/{countryId}")
     public ResponseEntity<Long> countUsersInCountry(@PathVariable Long countryId) {
-        Long usersInCountry = countryService.countUsersInCountry(countryId);
+        var usersInCountry = countryService.countUsersInCountry(countryId);
         return ResponseEntity.ok().body(usersInCountry);
     }
 }

@@ -29,10 +29,7 @@ public class ParticipantServiceImpl implements ParticipantService {
 
     @Override
     public Participant create(User user) {
-        Participant participant = Participant.builder()
-                .user(user)
-                .countries(new ArrayList<>())
-                .build();
+        Participant participant = buildParticipant(user);
         return save(participant);
     }
 
@@ -41,5 +38,12 @@ public class ParticipantServiceImpl implements ParticipantService {
         return repository.findCountriesByUserId(userId).orElseThrow(
                 () -> new NoSuchElementException("The User is not a participant of any Country")
         );
+    }
+
+    private Participant buildParticipant(User user) {
+        return Participant.builder()
+                .user(user)
+                .countries(new ArrayList<>())
+                .build();
     }
 }

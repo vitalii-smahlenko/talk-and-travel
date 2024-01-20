@@ -1,10 +1,8 @@
 package com.gmail.smaglenko.talkandtravel.controller;
 
-import com.gmail.smaglenko.talkandtravel.model.User;
-import com.gmail.smaglenko.talkandtravel.model.dto.AuthDto;
+import com.gmail.smaglenko.talkandtravel.model.dto.AuthResponse;
 import com.gmail.smaglenko.talkandtravel.model.dto.UserDto;
 import com.gmail.smaglenko.talkandtravel.service.AuthenticationService;
-import com.gmail.smaglenko.talkandtravel.service.JwtService;
 import com.gmail.smaglenko.talkandtravel.util.constants.ApiPathConstants;
 import com.gmail.smaglenko.talkandtravel.util.mapper.UserDtoMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,43 +20,23 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
     private final AuthenticationService authService;
     private final UserDtoMapper mapper;
-    private final JwtService jwtService;
 
     @Operation(
             description = "Register a user."
     )
     @PostMapping("/register")
-    public ResponseEntity<AuthDto> register(@RequestBody UserDto dto) {
-        User user = authService.register(mapper.mapToModel(dto));
-        AuthDto authDto = createAuthDto(user);
-        return ResponseEntity.ok(authDto);
+    public ResponseEntity<AuthResponse> register(@RequestBody UserDto dto) {
+        var user = mapper.mapToModel(dto);
+        var authResponse = authService.register(user);
+        return ResponseEntity.ok(authResponse);
     }
 
     @Operation(
             description = "Log in a user."
     )
     @PostMapping("/login")
-    public ResponseEntity<AuthDto> login(@RequestBody UserDto dto) {
-        User user = authService.login(dto.getUserEmail(), dto.getPassword());
-        AuthDto authDto = createAuthDto(user);
-        return ResponseEntity.ok(authDto);
-    }
-
-    @Operation(
-            description = "Logout the current user."
-    )
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout() {
-        SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
-        return ResponseEntity.noContent().build();
-    }
-
-    private AuthDto createAuthDto(User user) {
-        String token = jwtService.generateToken(user);
-        UserDto userDto = mapper.mapToDto(user);
-        return AuthDto.builder()
-                .token(token)
-                .userDto(userDto)
-                .build();
+    public ResponseEntity<AuthResponse> login(@RequestBody UserDto dto) {
+        var authResponse = authService.login(dto.getUserEmail(), dto.getPassword());
+        return ResponseEntity.ok(authResponse);
     }
 }

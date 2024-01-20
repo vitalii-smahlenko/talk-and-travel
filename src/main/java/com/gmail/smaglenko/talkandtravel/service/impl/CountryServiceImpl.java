@@ -41,11 +41,11 @@ public class CountryServiceImpl implements CountryService {
     public Country createOrUpdateCountryForUser(Country country, Long userID) {
         var user = userService.findById(userID);
         var existingCountry = repository.findByName(country.getName())
-                .orElseGet(() -> create(country));
+                .orElseGet(() -> buildCountry(country));
         var existingParticipant = participantService.findByUser(user)
                 .orElseGet(() -> participantService.create(user));
         joinCountry(existingCountry, existingParticipant);
-        Country savedCountry = save(existingCountry);
+        var savedCountry = save(existingCountry);
         return detachCountryFields(savedCountry);
     }
 
@@ -66,7 +66,7 @@ public class CountryServiceImpl implements CountryService {
         }
     }
 
-    private Country create(Country country) {
+    private Country buildCountry(Country country) {
         return Country.builder()
                 .name(country.getName())
                 .flagCode(country.getFlagCode())

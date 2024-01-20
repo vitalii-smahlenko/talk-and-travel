@@ -45,8 +45,8 @@ public class MessageController {
     )
     @PostMapping()
     public ResponseEntity<MessageDto> create(@RequestBody MessageRequest messageRequest) {
-        Message message = messageService.create(messageRequest);
-        MessageDto messageDto = messageDtoMapper.mapToDto(message);
+        var message = messageService.create(messageRequest);
+        var messageDto = messageDtoMapper.mapToDto(message);
         return ResponseEntity.ok().body(messageDto);
     }
 }

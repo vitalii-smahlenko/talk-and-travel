@@ -1,6 +1,5 @@
 package com.gmail.smaglenko.talkandtravel.controller;
 
-import com.gmail.smaglenko.talkandtravel.model.Country;
 import com.gmail.smaglenko.talkandtravel.model.dto.CountryDto;
 import com.gmail.smaglenko.talkandtravel.service.CountryService;
 import com.gmail.smaglenko.talkandtravel.util.constants.ApiPathConstants;

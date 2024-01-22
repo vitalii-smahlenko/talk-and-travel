@@ -29,7 +29,13 @@ public class TokenServiceImpl implements TokenService {
         return repository.findByToken(token);
     }
 
+    @Override
     public List<Token> saveAll(List<Token> tokens) {
         return repository.saveAll(tokens);
+    }
+
+    @Override
+    public void deleteInvalidTokensByUserId(Long userId) {
+        repository.deleteInvalidTokensByUserId(userId);
     }
 }

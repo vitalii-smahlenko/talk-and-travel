@@ -12,4 +12,6 @@ public interface TokenService {
     Optional<Token> findByToken(String token);
 
     List<Token> saveAll(List<Token> tokens);
+
+    void deleteInvalidTokensByUserId(Long userId);
 }

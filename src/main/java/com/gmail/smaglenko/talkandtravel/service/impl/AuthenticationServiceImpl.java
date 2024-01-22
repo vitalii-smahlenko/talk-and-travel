@@ -7,7 +7,6 @@ import com.gmail.smaglenko.talkandtravel.model.Token;
 import com.gmail.smaglenko.talkandtravel.model.TokenType;
 import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.model.dto.AuthResponse;
-import com.gmail.smaglenko.talkandtravel.model.dto.UserDto;
 import com.gmail.smaglenko.talkandtravel.service.AuthenticationService;
 import com.gmail.smaglenko.talkandtravel.service.JwtService;
 import com.gmail.smaglenko.talkandtravel.service.TokenService;
@@ -15,7 +14,6 @@ import com.gmail.smaglenko.talkandtravel.service.UserService;
 import com.gmail.smaglenko.talkandtravel.util.mapper.UserDtoMapper;
 import com.gmail.smaglenko.talkandtravel.util.validator.PasswordValidator;
 import com.gmail.smaglenko.talkandtravel.util.validator.UserEmailValidator;
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,7 +35,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Transactional
     public AuthResponse register(User user) {
         isPasswordAndEmailValid(user);
-        var existingUser = userService.findUserByEmail(user.getUserEmail());
+        var existingUser = userService.findUserByEmail(user.getUserEmail().toLowerCase());
         isEmailExist(existingUser);
         var jwtToken = jwtService.generateToken(user);
         var savedUser = userService.save(buildUser(user));
@@ -49,13 +47,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     @Transactional
-    public AuthResponse login(String userEmail, String password) {
-        var userFromDb = userService.findUserByEmail(userEmail);
-        isUsernameAndPasswordCorrect(password, userFromDb);
+    public AuthResponse login(User user) {
+        var userFromDb
+                = userService.findUserByEmail(user.getUserEmail().toLowerCase());
+        isUsernameAndPasswordCorrect(user.getPassword(), userFromDb);
         var existingUser = userFromDb.get();
         var jwtToken = jwtService.generateToken(existingUser);
         var token = buildToken(jwtToken, existingUser);
         revokeAllUserTokens(existingUser);
+        tokenService.deleteInvalidTokensByUserId(existingUser.getId());
         tokenService.save(token);
         return buildAuthResponse(jwtToken, existingUser);
     }
@@ -116,7 +116,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private User buildUser(User user) {
         return User.builder()
                 .userName(user.getUserName())
-                .userEmail(user.getUserEmail())
+                .userEmail(user.getUserEmail().toLowerCase())
                 .password(user.getPassword())
                 .role(Role.USER)
                 .build();

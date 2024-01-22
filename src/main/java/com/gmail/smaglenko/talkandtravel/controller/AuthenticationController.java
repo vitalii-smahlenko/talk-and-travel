@@ -1,5 +1,6 @@
 package com.gmail.smaglenko.talkandtravel.controller;
 
+import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.model.dto.AuthResponse;
 import com.gmail.smaglenko.talkandtravel.model.dto.UserDto;
 import com.gmail.smaglenko.talkandtravel.service.AuthenticationService;
@@ -35,7 +36,8 @@ public class AuthenticationController {
     )
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody UserDto dto) {
-        var authResponse = authService.login(dto.getUserEmail(), dto.getPassword());
+        var user = mapper.mapToModel(dto);
+        var authResponse = authService.login(user);
         return ResponseEntity.ok(authResponse);
     }
 }

@@ -3,7 +3,6 @@ package com.gmail.smaglenko.talkandtravel.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import static org.springframework.http.HttpMethod.POST;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -18,6 +17,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import static com.gmail.smaglenko.talkandtravel.model.Role.USER;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -39,14 +39,15 @@ public class SecurityConfiguration {
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers(WHITE_LIST_URL).permitAll()
+                        req.requestMatchers(WHITE_LIST_URL)
+                                .permitAll()
                                 .requestMatchers(POST, "/api/countries/", "/api/messages/")
-                                .hasAnyRole(USER.name())
+                                .hasAnyAuthority(USER.name())
                                 .requestMatchers(PUT, "/api/users/")
-                                .hasAnyRole(USER.name())
+                                .hasAnyAuthority(USER.name())
                                 .requestMatchers(GET, "/api/users/", "/api/participants/",
                                         "/api/countries/", "/api/messages/")
-                                .hasAnyRole(USER.name())
+                                .hasAnyAuthority(USER.name())
                                 .anyRequest()
                                 .authenticated()
                 )
@@ -56,7 +57,7 @@ public class SecurityConfiguration {
                 .logout(logout ->
                         logout.logoutUrl("/api/authentication/logout")
                                 .addLogoutHandler(logoutHandler)
-                                .addLogoutHandler(
+                                .logoutSuccessHandler(
                                         (request, response, authentication)
                                                 -> SecurityContextHolder.clearContext())
                 );

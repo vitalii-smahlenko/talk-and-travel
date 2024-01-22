@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 public class JwtServiceImpl implements JwtService {
     @Value("${SECRET_KEY}")
     private String secretKey;
-    private UserDetails userD;
 
     @Override
     public String extractUsername(String token) {

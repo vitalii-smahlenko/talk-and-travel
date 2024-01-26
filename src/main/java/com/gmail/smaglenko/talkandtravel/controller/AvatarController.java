@@ -2,6 +2,7 @@ package com.gmail.smaglenko.talkandtravel.controller;
 
 import com.gmail.smaglenko.talkandtravel.service.AvatarService;
 import com.gmail.smaglenko.talkandtravel.util.constants.ApiPathConstants;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,9 @@ import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 public class AvatarController {
     private final AvatarService avatarService;
 
+    @Operation(
+            description = "Get Avatar by User ID."
+    )
     @GetMapping("/user/{userID}")
     private ResponseEntity<byte[]> getByUserId(@PathVariable Long userID) {
         var avatar = avatarService.findByUserId(userID);

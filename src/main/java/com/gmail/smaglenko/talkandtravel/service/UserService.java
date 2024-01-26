@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface UserService {
 
-    User create(User user) throws IOException;
+    User save(User user) throws IOException;
 
     User update(User user);
 

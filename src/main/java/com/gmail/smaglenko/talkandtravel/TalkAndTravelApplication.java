@@ -44,7 +44,7 @@ public class TalkAndTravelApplication {
                             user -> {/* Обробка випадку, коли користувач знайдений */},
                             () -> {
                                 try {
-                                    userService.create(User.builder()
+                                    userService.save(User.builder()
                                             .userName(adminName)
                                             .userEmail(adminEmail)
                                             .password(adminPassword)

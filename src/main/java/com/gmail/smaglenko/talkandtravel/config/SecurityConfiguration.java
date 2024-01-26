@@ -41,7 +41,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
-                                .requestMatchers(POST, "/api/countries/", "/api/messages/")
+                                .requestMatchers(POST, "/api/countries/", "/api/messages/",
+                                        "/api/avatars")
                                 .hasAnyAuthority(USER.name())
                                 .requestMatchers(PUT, "/api/users/")
                                 .hasAnyAuthority(USER.name())

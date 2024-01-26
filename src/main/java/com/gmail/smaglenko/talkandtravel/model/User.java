@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -19,11 +20,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "users")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +36,8 @@ public class User {
     private String userEmail;
     @Column(nullable = false)
     private String password;
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @Transient
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
     private Avatar avatar;
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -46,3 +48,5 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
 }
+
+

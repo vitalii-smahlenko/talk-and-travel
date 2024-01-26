@@ -7,6 +7,7 @@ import com.gmail.smaglenko.talkandtravel.service.AuthenticationService;
 import com.gmail.smaglenko.talkandtravel.util.constants.ApiPathConstants;
 import com.gmail.smaglenko.talkandtravel.util.mapper.UserDtoMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +26,7 @@ public class AuthenticationController {
             description = "Register a user."
     )
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody UserDto dto) {
+    public ResponseEntity<AuthResponse> register(@RequestBody UserDto dto) throws IOException {
         var user = mapper.mapToModel(dto);
         var authResponse = authService.register(user);
         return ResponseEntity.ok(authResponse);

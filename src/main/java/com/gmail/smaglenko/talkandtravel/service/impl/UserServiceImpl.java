@@ -17,17 +17,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
-    private final AvatarService avatarService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public User create(User user) throws IOException {
+    public User save(User user) throws IOException {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        var avatar = avatarService.createStandardAvatar(user.getUserName());
-        var existingUser = repository.save(user);
-        avatar.setUser(existingUser);
-        avatarService.save(avatar);
-        return existingUser;
+        return repository.save(user);
     }
 
     @Override

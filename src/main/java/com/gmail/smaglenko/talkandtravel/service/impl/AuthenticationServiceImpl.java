@@ -8,6 +8,7 @@ import com.gmail.smaglenko.talkandtravel.model.TokenType;
 import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.model.dto.AuthResponse;
 import com.gmail.smaglenko.talkandtravel.service.AuthenticationService;
+import com.gmail.smaglenko.talkandtravel.service.AvatarService;
 import com.gmail.smaglenko.talkandtravel.service.JwtService;
 import com.gmail.smaglenko.talkandtravel.service.TokenService;
 import com.gmail.smaglenko.talkandtravel.service.UserService;
@@ -31,6 +32,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
     private final UserDtoMapper userDtoMapper;
+    private final AvatarService avatarService;
 
     @Override
     @Transactional
@@ -40,7 +42,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 = userService.findUserByEmail(user.getUserEmail().toLowerCase());
         isEmailExist(userByEmail);
         var jwtToken = jwtService.generateToken(user);
-        var savedUser = userService.create(buildUser(user));
+        var savedUser = userService.save(buildUser(user));
+        saveAvatarToUser(savedUser);
         var token = buildToken(jwtToken, savedUser);
         revokeAllUserTokens(savedUser);
         tokenService.save(token);
@@ -50,10 +53,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public AuthResponse login(User user) {
-        var userByEmailer
+        var userByEmail
                 = userService.findUserByEmail(user.getUserEmail().toLowerCase());
-        isUsernameAndPasswordCorrect(user.getPassword(), userByEmailer);
-        var existingUser = userByEmailer.get();
+        isUsernameAndPasswordCorrect(user.getPassword(), userByEmail);
+        var existingUser = userByEmail.get();
         var jwtToken = jwtService.generateToken(existingUser);
         var token = buildToken(jwtToken, existingUser);
         revokeAllUserTokens(existingUser);
@@ -72,6 +75,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             token.setRevoked(true);
         });
         tokenService.saveAll(validUserTokens);
+    }
+
+    private void saveAvatarToUser(User savedUser) throws IOException {
+        var avatar = avatarService.createStandardAvatar(savedUser.getUserName());
+        avatar.setUser(savedUser);
+        avatarService.save(avatar);
     }
 
     private void isUsernameAndPasswordCorrect(String password, Optional<User> user) {

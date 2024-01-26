@@ -1,9 +1,12 @@
 package com.gmail.smaglenko.talkandtravel.service.impl;
 
 import com.gmail.smaglenko.talkandtravel.exception.AuthenticationException;
+import com.gmail.smaglenko.talkandtravel.model.Avatar;
 import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.repository.UserRepository;
+import com.gmail.smaglenko.talkandtravel.service.AvatarService;
 import com.gmail.smaglenko.talkandtravel.service.UserService;
+import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +17,17 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
+    private final AvatarService avatarService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public User save(User user) {
+    public User create(User user) throws IOException {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return repository.save(user);
+        var avatar = avatarService.createStandardAvatar(user.getUserName());
+        var existingUser = repository.save(user);
+        avatar.setUser(existingUser);
+        avatarService.save(avatar);
+        return existingUser;
     }
 
     @Override
@@ -45,7 +53,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void isEmailAlreadyExist(Optional<User> userByEmail) {
-        if(userByEmail.isPresent()){
+        if (userByEmail.isPresent()) {
             throw new AuthenticationException("A user with this email already exists");
         }
     }

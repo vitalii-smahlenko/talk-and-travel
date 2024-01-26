@@ -5,7 +5,7 @@ import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.service.UserService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
-import java.util.Optional;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -39,15 +39,22 @@ public class TalkAndTravelApplication {
     @Bean
     CommandLineRunner run() {
         return args -> {
-            Optional<User> userByEmail = userService.findUserByEmail(adminEmail);
-            if (userByEmail.isEmpty()) {
-                userService.save(User.builder()
-                        .userName(adminName)
-                        .userEmail(adminEmail)
-                        .password(adminPassword)
-                        .role(Role.ADMIN)
-                        .build());
-            }
+            userService.findUserByEmail(adminEmail)
+                    .ifPresentOrElse(
+                            user -> {/* Обробка випадку, коли користувач знайдений */},
+                            () -> {
+                                try {
+                                    userService.create(User.builder()
+                                            .userName(adminName)
+                                            .userEmail(adminEmail)
+                                            .password(adminPassword)
+                                            .role(Role.ADMIN)
+                                            .build());
+                                } catch (IOException e) {
+                                    throw new RuntimeException("Cant generate standard avatar.");
+                                }
+                            }
+                    );
         };
     }
 }

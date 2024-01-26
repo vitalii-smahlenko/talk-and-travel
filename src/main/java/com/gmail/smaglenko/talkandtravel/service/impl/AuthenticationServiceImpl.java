@@ -14,6 +14,7 @@ import com.gmail.smaglenko.talkandtravel.service.UserService;
 import com.gmail.smaglenko.talkandtravel.util.mapper.UserDtoMapper;
 import com.gmail.smaglenko.talkandtravel.util.validator.PasswordValidator;
 import com.gmail.smaglenko.talkandtravel.util.validator.UserEmailValidator;
+import java.io.IOException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,12 +34,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     @Transactional
-    public AuthResponse register(User user) {
+    public AuthResponse register(User user) throws IOException {
         isPasswordAndEmailValid(user);
-        var existingUser = userService.findUserByEmail(user.getUserEmail().toLowerCase());
-        isEmailExist(existingUser);
+        var userByEmail
+                = userService.findUserByEmail(user.getUserEmail().toLowerCase());
+        isEmailExist(userByEmail);
         var jwtToken = jwtService.generateToken(user);
-        var savedUser = userService.save(buildUser(user));
+        var savedUser = userService.create(buildUser(user));
         var token = buildToken(jwtToken, savedUser);
         revokeAllUserTokens(savedUser);
         tokenService.save(token);
@@ -48,10 +50,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public AuthResponse login(User user) {
-        var userFromDb
+        var userByEmailer
                 = userService.findUserByEmail(user.getUserEmail().toLowerCase());
-        isUsernameAndPasswordCorrect(user.getPassword(), userFromDb);
-        var existingUser = userFromDb.get();
+        isUsernameAndPasswordCorrect(user.getPassword(), userByEmailer);
+        var existingUser = userByEmailer.get();
         var jwtToken = jwtService.generateToken(existingUser);
         var token = buildToken(jwtToken, existingUser);
         revokeAllUserTokens(existingUser);
@@ -60,27 +62,27 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return buildAuthResponse(jwtToken, existingUser);
     }
 
-    private void revokeAllUserTokens(User user){
+    private void revokeAllUserTokens(User user) {
         var validUserTokens = tokenService.findAllValidTokensByUserId(user.getId());
-        if(validUserTokens.isEmpty()){
+        if (validUserTokens.isEmpty()) {
             return;
         }
-        validUserTokens.forEach(token ->{
+        validUserTokens.forEach(token -> {
             token.setExpired(true);
             token.setRevoked(true);
         });
         tokenService.saveAll(validUserTokens);
     }
 
-    private void isUsernameAndPasswordCorrect(String password, Optional<User> userFromDb) {
-        if (userFromDb.isEmpty()
-                || !passwordEncoder.matches(password, userFromDb.get().getPassword())) {
+    private void isUsernameAndPasswordCorrect(String password, Optional<User> user) {
+        if (user.isEmpty()
+                || !passwordEncoder.matches(password, user.get().getPassword())) {
             throw new AuthenticationException("Incorrect username or password!!!");
         }
     }
 
-    private void isEmailExist(Optional<User> userFromDb) {
-        if (userFromDb.isPresent()) {
+    private void isEmailExist(Optional<User> user) {
+        if (user.isPresent()) {
             throw new RegistrationException("A user with this email already exists");
         }
     }

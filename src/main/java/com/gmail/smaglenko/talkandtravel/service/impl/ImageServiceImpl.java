@@ -1,7 +1,11 @@
 package com.gmail.smaglenko.talkandtravel.service.impl;
 
+import com.gmail.smaglenko.talkandtravel.exception.ImageWriteException;
 import com.gmail.smaglenko.talkandtravel.service.ImageService;
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,9 +27,24 @@ public class ImageServiceImpl implements ImageService {
     private static final int FONT_SIZE = 50;
 
     @Override
-    public byte[] generateImage(String name) throws IOException {
+    public byte[] generateImage(String name) {
         char firstLetterOfName = name.charAt(INDEX);
         var image = new BufferedImage(IMAGE_WIDTH, IMAGE_HEIGHT, BufferedImage.TYPE_INT_RGB);
+        createImageWithFirstLetter(firstLetterOfName, image);
+        var byteArrayOutputStream = new ByteArrayOutputStream();
+        writeImageToPngFormat(image, byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    private void writeImageToPngFormat(BufferedImage image, ByteArrayOutputStream byteArrayOutputStream) {
+        try {
+            ImageIO.write(image, "png", byteArrayOutputStream);
+        } catch (IOException e) {
+            throw new ImageWriteException("Error writing an image to PNG format");
+        }
+    }
+
+    private void createImageWithFirstLetter(char firstLetterOfName, BufferedImage image) {
         var graphics = getGraphics2D(image);
         var xAndYCoordinatesOfFirstLetterOfName
                 = calculateXAndYCoordinates(graphics, firstLetterOfName);
@@ -35,9 +54,6 @@ public class ImageServiceImpl implements ImageService {
                 String.valueOf(firstLetterOfName), xCoordinateOfLatter, yCoordinateOfLatter
         );
         graphics.dispose();
-        var byteArrayOutputStream = new ByteArrayOutputStream();
-        ImageIO.write(image, "png", byteArrayOutputStream);
-        return byteArrayOutputStream.toByteArray();
     }
 
     private Graphics2D getGraphics2D(BufferedImage image) {

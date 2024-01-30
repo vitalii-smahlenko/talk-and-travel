@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ApiExceptionHandler {
     @ExceptionHandler({AuthenticationException.class, RegistrationException.class,
-            NoSuchElementException.class, UsernameNotFoundException.class})
+            NoSuchElementException.class, UsernameNotFoundException.class,
+            UnsupportedFormatException.class, FileSizeExceededException.class,
+            ImageWriteException.class, RuntimeException.class})
     public ResponseEntity<Object> handleException(Exception e) {
         HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         ApiException apiException = new ApiException(

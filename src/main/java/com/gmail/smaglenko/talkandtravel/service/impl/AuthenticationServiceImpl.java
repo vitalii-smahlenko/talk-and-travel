@@ -37,9 +37,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public AuthResponse register(User user) throws IOException {
+        user.setUserEmail(user.getUserEmail().toLowerCase());
         isPasswordAndEmailValid(user);
         var userByEmail
-                = userService.findUserByEmail(user.getUserEmail().toLowerCase());
+                = userService.findUserByEmail(user.getUserEmail());
         isEmailExist(userByEmail);
         var jwtToken = jwtService.generateToken(user);
         var savedUser = userService.save(buildUser(user));

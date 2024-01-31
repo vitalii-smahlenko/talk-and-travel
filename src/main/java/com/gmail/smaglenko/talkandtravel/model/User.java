@@ -41,7 +41,7 @@ public class User {
     private Avatar avatar;
     @Enumerated(EnumType.STRING)
     private Role role;
-    @Size(min = 10, max = 1000, message = "Maximum number of characters for About 1000")
+    @Size(min = 10, max = 500, message = "Maximum number of characters for About 500")
     private String about;
     @OneToMany(mappedBy = "user")
     private List<Participant> participatedCountries;

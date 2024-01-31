@@ -20,12 +20,12 @@ import lombok.Setter;
 
 
 @Entity
-@Table(name = "messages")
+@Table(name = "group_messages")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Message {
+public class GroupMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

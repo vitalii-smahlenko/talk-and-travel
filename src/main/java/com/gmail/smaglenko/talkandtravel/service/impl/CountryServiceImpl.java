@@ -70,7 +70,7 @@ public class CountryServiceImpl implements CountryService {
         return Country.builder()
                 .name(country.getName())
                 .flagCode(country.getFlagCode())
-                .messages(new ArrayList<>())
+                .groupMessages(new ArrayList<>())
                 .participants(new ArrayList<>())
                 .build();
     }

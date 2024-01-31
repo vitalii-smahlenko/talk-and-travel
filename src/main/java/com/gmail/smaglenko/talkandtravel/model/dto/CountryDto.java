@@ -1,6 +1,6 @@
 package com.gmail.smaglenko.talkandtravel.model.dto;
 
-import com.gmail.smaglenko.talkandtravel.model.Message;
+import com.gmail.smaglenko.talkandtravel.model.GroupMessage;
 import com.gmail.smaglenko.talkandtravel.model.Participant;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -16,6 +16,6 @@ public class CountryDto {
     private Long id;
     private String name;
     private String flagCode;
-    private List<Message> messages;
+    private List<GroupMessage> groupMessages;
     private List<Participant> participants;
 }

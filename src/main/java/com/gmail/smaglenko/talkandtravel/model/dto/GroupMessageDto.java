@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageDto {
+public class GroupMessageDto {
     private Long id;
     private String content;
     private LocalDateTime creationDate = LocalDateTime.now();

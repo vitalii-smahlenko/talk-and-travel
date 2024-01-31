@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class MessageRequest {
+public class GroupMessageRequest {
     private String content;
     private Long senderId;
     private Long countryId;

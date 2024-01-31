@@ -1,7 +1,6 @@
 package com.gmail.smaglenko.talkandtravel.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,7 +12,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,7 +39,7 @@ public class Country {
     @Column(nullable = false, unique = true)
     private String flagCode;
     @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
-    private List<Message> messages;
+    private List<GroupMessage> groupMessages;
     @ManyToMany(mappedBy = "countries", fetch = FetchType.LAZY)
     private List<Participant> participants;
 }

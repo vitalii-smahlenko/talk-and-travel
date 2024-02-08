@@ -1,3 +1,26 @@
+<p align="center">
+<img src="images/T&T.jpg" style="width: 300px; height: 230px;">
+</p>
+
 Project description
 -
-#### *This is a simple chat application for people who like to travel, written in Java using Spring Boot.*
+#### *Talk&Travel is a chat app for people who love to travel, written in Java using Spring Boot.*
+
+Technologies
+-
+- Java "17.0.9" 2023-10-17 LTS
+- Apache Maven 3.9.6
+- Spring
+    - Boot
+    - Core
+    - Security
+    - Web
+    - MVC
+- AWS
+    - Elastic Beanstalk
+    - RDS
+    - Route 53
+- PostgreSQL
+- Lombok
+- MapStruct
+- Swagger https://talk-and-travel.pp.ua/swagger-ui/index.html#/

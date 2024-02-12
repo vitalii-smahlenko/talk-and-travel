@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,13 +41,10 @@ public class GroupMessageController {
         return ResponseEntity.ok().body(groupGroupMessageDtos);
     }
 
-    @Operation(
-            description = "This method creates a group message."
-    )
-    @PostMapping()
-    public ResponseEntity<GroupMessageDto> create(@RequestBody GroupMessageRequest groupMessageRequest) {
+    @MessageMapping("/group-messages")
+    @SendTo("/topic/group-messages")
+    public GroupMessageDto create(@RequestBody GroupMessageRequest groupMessageRequest) {
         var groupMessage = groupMessageService.create(groupMessageRequest);
-        var groupMessageDto = groupMessageDtoMapper.mapToDto(groupMessage);
-        return ResponseEntity.ok().body(groupMessageDto);
+        return groupMessageDtoMapper.mapToDto(groupMessage);
     }
 }

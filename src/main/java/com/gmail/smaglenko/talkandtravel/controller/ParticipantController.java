@@ -26,7 +26,7 @@ public class ParticipantController {
     )
     @GetMapping("/countries/userId/{userId}")
     public ResponseEntity<List<CountryDto>> findCountriesByUserId(@PathVariable Long userId) {
-        List<Country> countriesByUserId = participantService.findCountriesByUser(userId);
+        List<Country> countriesByUserId = participantService.findAllCountriesByUser(userId);
         List<CountryDto> responseCountryDtos
                 = countriesByUserId.stream()
                 .map(countryDtoMapper::mapToDto)

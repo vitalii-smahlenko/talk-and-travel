@@ -23,8 +23,8 @@ public class ParticipantServiceImpl implements ParticipantService {
     }
 
     @Override
-    public Optional<Participant> findByUser(User user) {
-        return repository.findByUser(user);
+    public Optional<Participant> findByUserIdAndCountryId(Long userId, Long countryId) {
+        return repository.findByUserIdAndCountryId(userId, countryId);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class ParticipantServiceImpl implements ParticipantService {
     }
 
     @Override
-    public List<Country> findCountriesByUser(Long userId) {
+    public List<Country> findAllCountriesByUser(Long userId) {
         return repository.findCountriesByUserId(userId).orElseThrow(
                 () -> new NoSuchElementException("The User is not a participant of any Country")
         );

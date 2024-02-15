@@ -45,7 +45,7 @@ public class SecurityConfiguration {
                                 .requestMatchers(POST, "/api/countries/", "/api/messages/",
                                         "/api/avatars")
                                 .hasAnyAuthority(USER.name())
-                                .requestMatchers(PUT, "/api/users/")
+                                .requestMatchers(PUT, "/api/users/", "/api/countries/")
                                 .hasAnyAuthority(USER.name())
                                 .requestMatchers(GET, "/api/users/", "/api/participants/",
                                         "/api/countries/", "/api/messages/")

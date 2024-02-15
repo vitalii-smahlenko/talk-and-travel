@@ -9,9 +9,9 @@ import java.util.Optional;
 public interface ParticipantService {
     Participant save(Participant participant);
 
-    Optional<Participant> findByUser(User user);
+    Optional<Participant> findByUserIdAndCountryId(Long userId, Long countryId);
 
     Participant create(User user);
 
-    List<Country> findCountriesByUser(Long userId);
+    List<Country> findAllCountriesByUser(Long userId);
 }

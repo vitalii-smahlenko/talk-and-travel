@@ -12,6 +12,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,5 +42,5 @@ public class Country {
     @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
     private List<GroupMessage> groupMessages;
     @ManyToMany(mappedBy = "countries", fetch = FetchType.LAZY)
-    private List<Participant> participants;
+    private Set<Participant> participants;
 }

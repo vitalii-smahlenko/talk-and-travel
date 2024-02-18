@@ -47,14 +47,11 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     @Transactional
-    public Country createOrUpdateCountryForUser(Country country, Long userID) {
-        var user = userService.findById(userID);
-        var existingCountry = repository.findByName(country.getName())
-                .orElseGet(() -> createNewCountry(country));
-        var participant = getParticipant(country,userID);
-        existingCountry.getParticipants().add(participant);
-        //participant.getCountries().add(existingCountry);
-        //joinCountry(existingCountry, participant);
+    public Country createOrUpdateCountryForUser(Country country, Long userId) {
+        var user = userService.findById(userId);
+        Country existingCountry = getCountry(country);
+        var participant = getParticipant(existingCountry.getId(), userId);
+        joinCountry(existingCountry, participant);
         var savedCountry = save(existingCountry);
         return detachCountryFields(savedCountry);
     }
@@ -66,31 +63,31 @@ public class CountryServiceImpl implements CountryService {
         var user = userService.findById(userId);
         var participant = participantService.create(user);
         var newCountry = createNewCountry(country);
-        participant.getCountries().add(newCountry);
-        newCountry.getParticipants().add(participant);
-        var existingCountry = save(newCountry);
-        return detachCountryFields(existingCountry);
+        joinCountry(newCountry,participant);
+        var savedCountry = save(newCountry);
+        return detachCountryFields(savedCountry);
     }
 
     @Override
     @Transactional
     public Country update(Long countryId, Long userId) {
-        var existingCountry = getCountry(countryId);
-        var participant = getParticipant(existingCountry, userId);
-        existingCountry.getParticipants().add(participant);
-        Country country = repository.save(existingCountry);
-        return detachCountryFields(country);
+        var country = getCountry(countryId);
+        var participant = getParticipant(countryId, userId);
+        joinCountry(country, participant);
+        var savedCountry = repository.save(country);
+        return detachCountryFields(savedCountry);
     }
 
-    private Participant getParticipant(Country country, Long userId) {
-        var participant = participantService.findByUserIdAndCountryId(userId, country.getId());
-        if (participant.isEmpty()) {
-            var user = userService.findById(userId);
-            return participantService.create(user);
-        }
-        return participant.get();
+    private Participant getParticipant(Long countryId, Long userId) {
+        var user = userService.findById(userId);
+        return participantService.findByUserIdAndCountryId(userId, countryId)
+                .orElseGet(() -> participantService.create(user));
     }
 
+    private Country getCountry(Country country) {
+        return repository.findByName(country.getName())
+                .orElseGet(() -> createNewCountry(country));
+    }
 
     private Country getCountry(Long countryId) {
         return repository.findById(countryId).orElseThrow(
@@ -114,8 +111,12 @@ public class CountryServiceImpl implements CountryService {
     }
 
     private void joinCountry(Country country, Participant participant) {
-        country.getParticipants().add(participant);
-        participant.getCountries().add(country);
+        if (!country.getParticipants().contains(participant)) {
+            country.getParticipants().add(participant);
+        }
+        if (!participant.getCountries().contains(country)) {
+            participant.getCountries().add(country);
+        }
     }
 
     private Country createNewCountry(Country country) {

@@ -29,7 +29,7 @@ public class ParticipantServiceImpl implements ParticipantService {
 
     @Override
     public Participant create(User user) {
-        Participant participant = buildParticipant(user);
+        var participant = createNewParticipant(user);
         return save(participant);
     }
 
@@ -40,7 +40,7 @@ public class ParticipantServiceImpl implements ParticipantService {
         );
     }
 
-    private Participant buildParticipant(User user) {
+    private Participant createNewParticipant(User user) {
         return Participant.builder()
                 .user(user)
                 .countries(new ArrayList<>())

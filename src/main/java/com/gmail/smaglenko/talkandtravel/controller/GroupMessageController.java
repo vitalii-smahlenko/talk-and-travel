@@ -1,5 +1,6 @@
 package com.gmail.smaglenko.talkandtravel.controller;
 
+import com.gmail.smaglenko.talkandtravel.model.GroupMessage;
 import com.gmail.smaglenko.talkandtravel.model.dto.GroupMessageDto;
 import com.gmail.smaglenko.talkandtravel.model.dto.GroupMessageRequest;
 import com.gmail.smaglenko.talkandtravel.service.GroupMessageService;
@@ -32,9 +33,9 @@ public class GroupMessageController {
     @GetMapping("/{countryId}")
     public ResponseEntity<List<GroupMessageDto>> findByCountryIdOrderByCreationDateDesc(
             @PathVariable Long countryId) {
-        var groupMessagesByCountryIdOrderByCreationDateDesc
+        List<GroupMessage> groupMessagesByCountryIdOrderByCreationDateDesc
                 = groupMessageService.findByCountryIdOrderByCreationDateDesc(countryId);
-        var groupGroupMessageDtos
+        List<GroupMessageDto> groupGroupMessageDtos
                 = groupMessagesByCountryIdOrderByCreationDateDesc.stream()
                 .map(groupMessageDtoMapper::mapToDto)
                 .toList();

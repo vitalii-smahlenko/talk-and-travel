@@ -9,7 +9,7 @@ public interface AvatarService {
 
     Avatar findByUserId(Long userId);
 
-    Avatar createStandardAvatar(String username) throws IOException;
+    Avatar createDefaultAvatar(String username) throws IOException;
 
     Avatar uploadAvatar(MultipartFile imageFile, Long userId);
 }

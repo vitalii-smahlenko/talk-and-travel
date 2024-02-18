@@ -1,6 +1,5 @@
 package com.gmail.smaglenko.talkandtravel.controller;
 
-import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.model.dto.UserDto;
 import com.gmail.smaglenko.talkandtravel.service.UserService;
 import com.gmail.smaglenko.talkandtravel.util.constants.ApiPathConstants;
@@ -29,8 +28,8 @@ public class UserController {
     public ResponseEntity<UserDto> update(@RequestBody UserDto dto) {
         var user = userDtoMapper.mapToModel(dto);
         var updatedUser = userService.update(user);
-        var responseUserDto = userDtoMapper.mapToDto(updatedUser);
-        return ResponseEntity.ok().body(responseUserDto);
+        var userDto = userDtoMapper.mapToDto(updatedUser);
+        return ResponseEntity.ok().body(userDto);
     }
 
     @Operation(
@@ -39,7 +38,7 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> findById(@PathVariable Long userId) {
         var user = userService.findById(userId);
-        var responseUserDto = userDtoMapper.mapToDto(user);
-        return ResponseEntity.ok().body(responseUserDto);
+        var userDto = userDtoMapper.mapToDto(user);
+        return ResponseEntity.ok().body(userDto);
     }
 }

@@ -50,21 +50,21 @@ public class CountryController {
             description = "Create new country."
     )
     @PostMapping
-    public ResponseEntity<CountryDto> create(@RequestBody CountryDto countryDto) {
-        var country = countryDtoMapper.mapToModel(countryDto);
-        var newCountry = countryService.create(country, countryDto.getUserId());
-        var dto = countryDtoMapper.mapToDto(newCountry);
-        return ResponseEntity.ok().body(dto);
+    public ResponseEntity<CountryDto> create(@RequestBody CountryDto dto) {
+        var country = countryDtoMapper.mapToModel(dto);
+        var newCountry = countryService.create(country, dto.getUserId());
+        var countryDto = countryDtoMapper.mapToDto(newCountry);
+        return ResponseEntity.ok().body(countryDto);
     }
 
     @Operation(
             description = "Update existing country."
     )
     @PutMapping
-    public ResponseEntity<CountryDto> update(@RequestBody CountryDto countryDto) {
-        Country country = countryService.update(countryDto.getId(), countryDto.getUserId());
-        var dto = countryDtoMapper.mapToDto(country);
-        return ResponseEntity.ok().body(dto);
+    public ResponseEntity<CountryDto> update(@RequestBody CountryDto dto) {
+        var country = countryService.update(dto.getId(), dto.getUserId());
+        var countryDto = countryDtoMapper.mapToDto(country);
+        return ResponseEntity.ok().body(countryDto);
     }
 
     /*@MessageMapping("/country")

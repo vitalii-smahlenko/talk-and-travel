@@ -1,10 +1,8 @@
 package com.gmail.smaglenko.talkandtravel.service.impl;
 
 import com.gmail.smaglenko.talkandtravel.exception.AuthenticationException;
-import com.gmail.smaglenko.talkandtravel.model.Avatar;
 import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.repository.UserRepository;
-import com.gmail.smaglenko.talkandtravel.service.AvatarService;
 import com.gmail.smaglenko.talkandtravel.service.UserService;
 import java.io.IOException;
 import java.util.NoSuchElementException;
@@ -21,17 +19,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User save(User user) throws IOException {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        String password = user.getPassword();
+        String encodePassword = passwordEncoder.encode(password);
+        user.setPassword(encodePassword);
         return repository.save(user);
     }
 
     @Override
     public User update(User user) {
-        var userByEmail = findUserByEmail(user.getUserEmail());
-        isEmailAlreadyExist(userByEmail);
-        var existingUser = getExistingUser(user);
-        user.setPassword(existingUser.getPassword());
-        user.setRole(existingUser.getRole());
+        checkDuplicateEmail(user);
+        transferSecurityInfoFromExistingUser(user);
         return repository.save(user);
     }
 
@@ -47,13 +44,20 @@ public class UserServiceImpl implements UserService {
         );
     }
 
-    private void isEmailAlreadyExist(Optional<User> userByEmail) {
+    private void transferSecurityInfoFromExistingUser(User user) {
+        var existingUser = findUserById(user);
+        user.setPassword(existingUser.getPassword());
+        user.setRole(existingUser.getRole());
+    }
+
+    private void checkDuplicateEmail(User user) {
+        var userByEmail = findUserByEmail(user.getUserEmail());
         if (userByEmail.isPresent()) {
             throw new AuthenticationException("A user with this email already exists");
         }
     }
 
-    private User getExistingUser(User user) {
+    private User findUserById(User user) {
         return repository.findById(user.getId())
                 .orElseThrow(
                         () -> new NoSuchElementException("Can not find user by ID: " + user.getId())

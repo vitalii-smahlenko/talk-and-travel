@@ -16,7 +16,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler({AuthenticationException.class, RegistrationException.class,
             NoSuchElementException.class, UsernameNotFoundException.class,
             UnsupportedFormatException.class, FileSizeExceededException.class,
-            ImageWriteException.class, RuntimeException.class})
+            ImageWriteException.class, RuntimeException.class, ImageProcessingException.class})
     public ResponseEntity<Object> handleException(Exception e) {
         HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         ApiException apiException = new ApiException(

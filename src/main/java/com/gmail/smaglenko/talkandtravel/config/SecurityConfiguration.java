@@ -27,7 +27,8 @@ public class SecurityConfiguration {
     private static final String[] WHITE_LIST_URL = {
             "/api/authentication/**",
             "/swagger-ui/**",
-            "/v3/**"};
+            "/v3/**",
+            "/ws/", "/ws/**"};
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationProvider authenticationProvider;
     private final CorsConfigurationSource corsConfigurationSource;
@@ -44,7 +45,7 @@ public class SecurityConfiguration {
                                 .requestMatchers(POST, "/api/countries/", "/api/messages/",
                                         "/api/avatars")
                                 .hasAnyAuthority(USER.name())
-                                .requestMatchers(PUT, "/api/users/")
+                                .requestMatchers(PUT, "/api/users/", "/api/countries/")
                                 .hasAnyAuthority(USER.name())
                                 .requestMatchers(GET, "/api/users/", "/api/participants/",
                                         "/api/countries/", "/api/messages/")

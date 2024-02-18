@@ -45,8 +45,8 @@ public class ImageServiceImpl implements ImageService {
     }
 
     private void createImageWithFirstLetter(char firstLetterOfName, BufferedImage image) {
-        var graphics = getGraphics2D(image);
-        var xAndYCoordinatesOfFirstLetterOfName
+        Graphics2D graphics = getGraphics2D(image);
+        int[] xAndYCoordinatesOfFirstLetterOfName
                 = calculateXAndYCoordinates(graphics, firstLetterOfName);
         int xCoordinateOfLatter = xAndYCoordinatesOfFirstLetterOfName[0];
         int yCoordinateOfLatter = xAndYCoordinatesOfFirstLetterOfName[1];
@@ -57,7 +57,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     private Graphics2D getGraphics2D(BufferedImage image) {
-        var graphics = image.createGraphics();
+        Graphics2D graphics = image.createGraphics();
         graphics.setColor(Color.WHITE);
         graphics.fillRect(IMAGE_X, IMAGE_Y, IMAGE_WIDTH, IMAGE_HEIGHT);
         graphics.setColor(Color.LIGHT_GRAY);

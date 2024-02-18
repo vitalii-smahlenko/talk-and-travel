@@ -37,33 +37,47 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public AuthResponse register(User user) throws IOException {
-        user.setUserEmail(user.getUserEmail().toLowerCase());
-        isPasswordAndEmailValid(user);
-        var userByEmail
-                = userService.findUserByEmail(user.getUserEmail());
-        isEmailExist(userByEmail);
-        var jwtToken = jwtService.generateToken(user);
-        var savedUser = userService.save(buildUser(user));
-        saveAvatarToUser(savedUser);
-        var token = buildToken(jwtToken, savedUser);
-        revokeAllUserTokens(savedUser);
-        tokenService.save(token);
-        return buildAuthResponse(jwtToken, savedUser);
+        var newUser = registerNewUser(user);
+        String jwtToken = manageUserTokens(newUser);
+        return createNewAuthResponse(jwtToken, newUser);
     }
 
     @Override
     @Transactional
     public AuthResponse login(User user) {
-        var userByEmail
-                = userService.findUserByEmail(user.getUserEmail().toLowerCase());
-        isUsernameAndPasswordCorrect(user.getPassword(), userByEmail);
-        var existingUser = userByEmail.get();
-        var jwtToken = jwtService.generateToken(existingUser);
-        var token = buildToken(jwtToken, existingUser);
-        revokeAllUserTokens(existingUser);
-        tokenService.deleteInvalidTokensByUserId(existingUser.getId());
+        var authenticatedUser = authenticateUser(user);
+        String jwtToken = manageUserTokens(authenticatedUser);
+        return createNewAuthResponse(jwtToken, authenticatedUser);
+    }
+
+    private User authenticateUser(User user) {
+        Optional<User> userByEmail = userService.findUserByEmail(user.getUserEmail().toLowerCase());
+        checkUserCredentials(user.getPassword(), userByEmail);
+        return userByEmail.get();
+    }
+
+    private User registerNewUser(User user) throws IOException {
+        validateUserRegistrationData(user);
+        var newUser = userService.save(createNewUser(user));
+        generateStandardAvatar(newUser);
+        return newUser;
+    }
+
+    private String manageUserTokens(User user) {
+        String jwtToken = jwtService.generateToken(user);
+        var token = createNewToken(jwtToken, user);
+        revokeAllUserTokens(user);
+        tokenService.deleteInvalidTokensByUserId(user.getId());
         tokenService.save(token);
-        return buildAuthResponse(jwtToken, existingUser);
+        return jwtToken;
+    }
+
+    private void validateUserRegistrationData(User user) {
+        String lowercaseEmail = user.getUserEmail().toLowerCase();
+        user.setUserEmail(lowercaseEmail);
+        validateEmailAndPassword(user);
+        var userByEmail = userService.findUserByEmail(user.getUserEmail());
+        checkForDuplicateEmail(userByEmail);
     }
 
     private void revokeAllUserTokens(User user) {
@@ -78,26 +92,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         tokenService.saveAll(validUserTokens);
     }
 
-    private void saveAvatarToUser(User savedUser) throws IOException {
-        var avatar = avatarService.createStandardAvatar(savedUser.getUserName());
+    private void generateStandardAvatar(User savedUser) throws IOException {
+        var avatar = avatarService.createDefaultAvatar(savedUser.getUserName());
         avatar.setUser(savedUser);
         avatarService.save(avatar);
     }
 
-    private void isUsernameAndPasswordCorrect(String password, Optional<User> user) {
+    private void checkUserCredentials(String password, Optional<User> user) {
         if (user.isEmpty()
                 || !passwordEncoder.matches(password, user.get().getPassword())) {
             throw new AuthenticationException("Incorrect username or password!!!");
         }
     }
 
-    private void isEmailExist(Optional<User> user) {
+    private void checkForDuplicateEmail(Optional<User> user) {
         if (user.isPresent()) {
             throw new RegistrationException("A user with this email already exists");
         }
     }
 
-    private void isPasswordAndEmailValid(User user) {
+    private void validateEmailAndPassword(User user) {
         if (!emailValidator.isValid(user.getUserEmail())) {
             throw new RegistrationException("Invalid email address");
         }
@@ -107,7 +121,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
-    private AuthResponse buildAuthResponse(String jwtToken, User user) {
+    private AuthResponse createNewAuthResponse(String jwtToken, User user) {
         var userDto = userDtoMapper.mapToDto(user);
         return AuthResponse.builder()
                 .token(jwtToken)
@@ -115,7 +129,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
     }
 
-    private Token buildToken(String jwtToken, User savedUser) {
+    private Token createNewToken(String jwtToken, User savedUser) {
         return Token.builder()
                 .user(savedUser)
                 .token(jwtToken)
@@ -125,7 +139,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
     }
 
-    private User buildUser(User user) {
+    private User createNewUser(User user) {
         return User.builder()
                 .userName(user.getUserName())
                 .userEmail(user.getUserEmail().toLowerCase())

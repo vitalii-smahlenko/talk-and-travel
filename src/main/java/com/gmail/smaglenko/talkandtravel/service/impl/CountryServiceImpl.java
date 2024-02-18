@@ -7,6 +7,8 @@ import com.gmail.smaglenko.talkandtravel.service.CountryService;
 import com.gmail.smaglenko.talkandtravel.service.ParticipantService;
 import com.gmail.smaglenko.talkandtravel.service.UserService;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,21 +34,72 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
+    public List<Country> getAll() {
+        return repository.findAll().stream()
+                .map(this::detachCountryFields)
+                .toList();
+    }
+
+    @Override
     public Long countUsersInCountry(Long countryId) {
         return repository.countUsersInCountry(countryId);
     }
 
     @Override
     @Transactional
-    public Country createOrUpdateCountryForUser(Country country, Long userID) {
-        var user = userService.findById(userID);
-        var existingCountry = repository.findByName(country.getName())
-                .orElseGet(() -> buildCountry(country));
-        var existingParticipant = participantService.findByUser(user)
-                .orElseGet(() -> participantService.create(user));
-        joinCountry(existingCountry, existingParticipant);
+    public Country createOrUpdateCountryForUser(Country country, Long userId) {
+        var user = userService.findById(userId);
+        Country existingCountry = getCountry(country);
+        var participant = getParticipant(existingCountry.getId(), userId);
+        joinCountry(existingCountry, participant);
         var savedCountry = save(existingCountry);
         return detachCountryFields(savedCountry);
+    }
+
+    @Override
+    @Transactional
+    public Country create(Country country, Long userId) {
+        isCountryExist(country);
+        var user = userService.findById(userId);
+        var participant = participantService.create(user);
+        var newCountry = createNewCountry(country);
+        joinCountry(newCountry,participant);
+        var savedCountry = save(newCountry);
+        return detachCountryFields(savedCountry);
+    }
+
+    @Override
+    @Transactional
+    public Country update(Long countryId, Long userId) {
+        var country = getCountry(countryId);
+        var participant = getParticipant(countryId, userId);
+        joinCountry(country, participant);
+        var savedCountry = repository.save(country);
+        return detachCountryFields(savedCountry);
+    }
+
+    private Participant getParticipant(Long countryId, Long userId) {
+        var user = userService.findById(userId);
+        return participantService.findByUserIdAndCountryId(userId, countryId)
+                .orElseGet(() -> participantService.create(user));
+    }
+
+    private Country getCountry(Country country) {
+        return repository.findByName(country.getName())
+                .orElseGet(() -> createNewCountry(country));
+    }
+
+    private Country getCountry(Long countryId) {
+        return repository.findById(countryId).orElseThrow(
+                () -> new NoSuchElementException("The country does not exist yet.")
+        );
+    }
+
+    private void isCountryExist(Country country) {
+        var existingCountry = repository.findByName(country.getName());
+        if (existingCountry.isPresent()) {
+            throw new RuntimeException("Country already exist");
+        }
     }
 
     private Country detachCountryFields(Country country) {
@@ -66,12 +119,12 @@ public class CountryServiceImpl implements CountryService {
         }
     }
 
-    private Country buildCountry(Country country) {
+    private Country createNewCountry(Country country) {
         return Country.builder()
                 .name(country.getName())
                 .flagCode(country.getFlagCode())
                 .groupMessages(new ArrayList<>())
-                .participants(new ArrayList<>())
+                .participants(new HashSet<>())
                 .build();
     }
 }

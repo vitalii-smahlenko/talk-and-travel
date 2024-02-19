@@ -41,7 +41,7 @@ public class TalkAndTravelApplication {
         return args -> {
             userService.findUserByEmail(adminEmail)
                     .ifPresentOrElse(
-                            user -> {/* Обробка випадку, коли користувач знайдений */},
+                            user -> {},
                             () -> {
                                 try {
                                     userService.save(User.builder()

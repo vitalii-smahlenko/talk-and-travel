@@ -42,8 +42,9 @@ public class GroupMessageController {
         return ResponseEntity.ok().body(groupGroupMessageDtos);
     }
 
-    @MessageMapping("/group-messages")
-    @SendTo("/topic/group-messages")
+   /* @MessageMapping("/group-messages")
+    @SendTo("/topic/group-messages")*/
+    @PostMapping
     public GroupMessageDto create(@RequestBody GroupMessageRequest groupMessageRequest) {
         var groupMessage = groupMessageService.create(groupMessageRequest);
         return groupMessageDtoMapper.mapToDto(groupMessage);

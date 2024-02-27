@@ -67,10 +67,9 @@ public class CountryController {
         return ResponseEntity.ok().body(countryDto);
     }
 
-    /*@MessageMapping("/country")
-    @SendTo("/topic/country")*/
-    @PostMapping("/create-or-update")
-    public CountryDto createOrUpdateCountryForUser(@RequestBody CountryDto countryDto) {
+    @MessageMapping("/countries/{country-name}")
+    @SendTo("/country/{country-name}")
+    public CountryDto createOrUpdateCountryForUser(CountryDto countryDto) {
         var requestedCountry = countryDtoMapper.mapToModel(countryDto);
         var country
                 = countryService

@@ -33,9 +33,9 @@ public class GroupMessageServiceImpl implements GroupMessageService {
 
     @Override
     public List<GroupMessage> findByCountryIdOrderByCreationDateDesc(Long countryId) {
-        List<GroupMessage> groupMessagesByCountryIdOrderByCreationDateDesc
+        List<GroupMessage> countryGroupMessagesByIdOrderByCreationDateDesc
                 = repository.findByCountryIdOrderByCreationDateDesc(countryId);
-        return groupMessagesByCountryIdOrderByCreationDateDesc.stream()
+        return countryGroupMessagesByIdOrderByCreationDateDesc.stream()
                 .map(this::detachGroupMessageFields)
                 .toList();
     }

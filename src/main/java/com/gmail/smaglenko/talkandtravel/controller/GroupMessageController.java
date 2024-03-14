@@ -11,6 +11,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,7 +43,7 @@ public class GroupMessageController {
 
     @MessageMapping("/group-messages/{country-name}")
     @SendTo("/group-message/{country-name}")
-    public GroupMessageDto create(GroupMessageRequest groupMessageRequest) {
+    public GroupMessageDto create(@Payload GroupMessageRequest groupMessageRequest) {
         var groupMessage = groupMessageService.create(groupMessageRequest);
         return groupMessageDtoMapper.mapToDto(groupMessage);
     }

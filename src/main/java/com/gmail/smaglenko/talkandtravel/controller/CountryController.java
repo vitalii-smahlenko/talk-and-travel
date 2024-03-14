@@ -10,6 +10,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,9 +68,9 @@ public class CountryController {
         return ResponseEntity.ok().body(countryDto);
     }
 
-    @MessageMapping("/countries/{country-name}")
-    @SendTo("/country/{country-name}")
-    public CountryDto createOrUpdateCountryForUser(CountryDto countryDto) {
+    @MessageMapping("/country/{country-name}")
+    @SendTo("/group-message/{country-name}")
+    public CountryDto createOrUpdateCountryForUser(@Payload CountryDto countryDto) {
         var requestedCountry = countryDtoMapper.mapToModel(countryDto);
         var country
                 = countryService

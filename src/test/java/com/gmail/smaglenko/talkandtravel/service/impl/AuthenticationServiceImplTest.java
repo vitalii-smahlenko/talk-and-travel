@@ -1,5 +1,6 @@
 package com.gmail.smaglenko.talkandtravel.service.impl;
 
+import com.gmail.smaglenko.talkandtravel.exception.RegistrationException;
 import com.gmail.smaglenko.talkandtravel.model.Avatar;
 import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.model.dto.AuthResponse;
@@ -13,6 +14,7 @@ import com.gmail.smaglenko.talkandtravel.util.validator.PasswordValidator;
 import com.gmail.smaglenko.talkandtravel.util.validator.UserEmailValidator;
 import java.io.IOException;
 import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -71,15 +73,12 @@ class AuthenticationServiceImplTest {
         when(tokenService.save(any())).thenReturn(null);
         when(userDtoMapper.mapToDto(user)).thenReturn(userDto);
 
-        User expected = user;
+        UserDto expected = creanteNewUserDto();
 
         AuthResponse authResponse = authenticationService.register(user);
         UserDto actual = authResponse.getUserDto();
 
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getUserEmail(), actual.getUserEmail());
-        assertEquals(expected.getUserName(), actual.getUserName());
-        assertEquals(expected.getPassword(), actual.getPassword());
+        assertEquals(expected, actual);
 
         verify(userService, times(1)).save(any());
         verify(userService, times(1)).findUserByEmail(USER_EMAIL);
@@ -92,6 +91,34 @@ class AuthenticationServiceImplTest {
         verify(userDtoMapper, times(1)).mapToDto(user);
     }
 
+    @Test
+    void register_shouldThrowRegistrationException_whenUserExists() {
+        when(userService.findUserByEmail(USER_EMAIL)).thenReturn(Optional.of(user));
+        when(emailValidator.isValid(USER_EMAIL)).thenReturn(true);
+        when(passwordValidator.isValid(USER_PASSWORD)).thenReturn(true);
+
+        assertThrows(RegistrationException.class,
+                () -> authenticationService.register(user)
+        );
+    }
+
+    @Test
+    void register_shouldThrowRegistrationException_whenInvalidEmail() {
+        when(emailValidator.isValid(USER_EMAIL)).thenReturn(false);
+
+        assertThrows(RegistrationException.class,
+                () -> authenticationService.register(user)
+        );
+    }
+
+    @Test
+    void register_shouldThrowRegistrationException_whenInvalidPassword() {
+        when(passwordValidator.isValid(USER_PASSWORD)).thenReturn(false);
+
+        assertThrows(RegistrationException.class,
+                () -> authenticationService.register(user)
+        );
+    }
 
 
     private User createNewUser() {

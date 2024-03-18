@@ -100,6 +100,10 @@ class AuthenticationServiceImplTest {
         assertThrows(RegistrationException.class,
                 () -> authenticationService.register(user)
         );
+
+        verify(userService, times(1)).findUserByEmail(USER_EMAIL);
+        verify(emailValidator, times(1)).isValid(USER_EMAIL);
+        verify(passwordValidator, times(1)).isValid(USER_PASSWORD);
     }
 
     @Test
@@ -109,6 +113,8 @@ class AuthenticationServiceImplTest {
         assertThrows(RegistrationException.class,
                 () -> authenticationService.register(user)
         );
+
+        verify(emailValidator, times(1)).isValid(USER_EMAIL);
     }
 
     @Test
@@ -118,6 +124,8 @@ class AuthenticationServiceImplTest {
         assertThrows(RegistrationException.class,
                 () -> authenticationService.register(user)
         );
+
+        verify(passwordValidator, times(1)).isValid(USER_PASSWORD);
     }
 
 

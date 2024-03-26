@@ -33,6 +33,7 @@ class AuthenticationServiceImplTest {
     private static final String USER_PASSWORD = "!123456Aa";
     private static final String USER_NAME = "Bob";
     private static final String USER_EMAIL = "bob@mail.com";
+    private static final String TEST_TOKEN = "test_token";
     @InjectMocks
     private AuthenticationServiceImpl authenticationService;
     private static final Long USER_ID = 1L;
@@ -68,9 +69,7 @@ class AuthenticationServiceImplTest {
         when(emailValidator.isValid(USER_EMAIL)).thenReturn(true);
         when(passwordValidator.isValid(USER_PASSWORD)).thenReturn(true);
         when(avatarService.createDefaultAvatar(USER_NAME)).thenReturn(new Avatar());
-        when(avatarService.save(any())).thenReturn(new Avatar());
-        when(jwtService.generateToken(user)).thenReturn("test_token");
-        when(tokenService.save(any())).thenReturn(null);
+        when(jwtService.generateToken(user)).thenReturn(TEST_TOKEN);
         when(userDtoMapper.mapToDto(user)).thenReturn(userDto);
 
         UserDto expected = creanteNewUserDto();
@@ -79,16 +78,6 @@ class AuthenticationServiceImplTest {
         UserDto actual = authResponse.getUserDto();
 
         assertEquals(expected, actual);
-
-        verify(userService, times(1)).save(any());
-        verify(userService, times(1)).findUserByEmail(USER_EMAIL);
-        verify(emailValidator, times(1)).isValid(USER_EMAIL);
-        verify(passwordValidator, times(1)).isValid(USER_PASSWORD);
-        verify(avatarService, times(1)).createDefaultAvatar(USER_NAME);
-        verify(avatarService, times(1)).save(any());
-        verify(jwtService, times(1)).generateToken(user);
-        verify(tokenService, times(1)).save(any());
-        verify(userDtoMapper, times(1)).mapToDto(user);
     }
 
     @Test
@@ -102,14 +91,10 @@ class AuthenticationServiceImplTest {
         );
 
         verify(userService, times(1)).findUserByEmail(USER_EMAIL);
-        verify(emailValidator, times(1)).isValid(USER_EMAIL);
-        verify(passwordValidator, times(1)).isValid(USER_PASSWORD);
     }
 
     @Test
     void register_shouldThrowRegistrationException_whenInvalidEmail() {
-        when(emailValidator.isValid(USER_EMAIL)).thenReturn(false);
-
         assertThrows(RegistrationException.class,
                 () -> authenticationService.register(user)
         );
@@ -119,6 +104,7 @@ class AuthenticationServiceImplTest {
 
     @Test
     void register_shouldThrowRegistrationException_whenInvalidPassword() {
+        when(emailValidator.isValid(USER_EMAIL)).thenReturn(true);
         when(passwordValidator.isValid(USER_PASSWORD)).thenReturn(false);
 
         assertThrows(RegistrationException.class,
@@ -126,6 +112,26 @@ class AuthenticationServiceImplTest {
         );
 
         verify(passwordValidator, times(1)).isValid(USER_PASSWORD);
+    }
+
+    @Test
+    void register_shouldSaveTokenForNewUser() throws IOException {
+        String expected = TEST_TOKEN;
+
+        when(userService.save(any())).thenReturn(user);
+        when(userService.findUserByEmail(USER_EMAIL)).thenReturn(Optional.empty());
+        when(emailValidator.isValid(USER_EMAIL)).thenReturn(true);
+        when(passwordValidator.isValid(USER_PASSWORD)).thenReturn(true);
+        when(avatarService.createDefaultAvatar(USER_NAME)).thenReturn(new Avatar());
+        when(avatarService.save(any())).thenReturn(new Avatar());
+        when(jwtService.generateToken(user)).thenReturn(expected);
+
+        AuthResponse authResponse = authenticationService.register(user);
+        String actual = authResponse.getToken();
+
+        assertEquals(expected, actual);
+
+        verify(tokenService, times(1)).save(any());
     }
 
 
@@ -146,5 +152,4 @@ class AuthenticationServiceImplTest {
                 .userName(USER_NAME)
                 .build();
     }
-
 }

@@ -17,24 +17,20 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfiguration {
-    private final List<String> ALLOWED_ORIGINS
-            = Arrays.asList(
+    private final List<String> ALLOWED_ORIGINS = Arrays.asList(
             "http://localhost:3001",
             "http://localhost:3000",
             "https://cheredniknatalya.github.io",
             "https://reginavarybrus.github.io"
     );
-    private final List<String> ALLOWED_METHODS
-            = Arrays.asList(
+    private final List<String> ALLOWED_METHODS = Arrays.asList(
             "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"
     );
-    private final List<String> ALLOWED_HEADERS
-            = Arrays.asList(
+    private final List<String> ALLOWED_HEADERS = Arrays.asList(
             "X-Requested-With", "Origin", "Content-Type", "Accept", "Authorization"
     );
-    private final List<String> EXPOSED_HEADERS
-            = Arrays.asList("Content-Type", "Cache-Control", "Content-Language", "Content-Length",
-            "Last-Modified");
+    private final List<String> EXPOSED_HEADERS = Arrays.asList(
+            "Content-Type", "Cache-Control", "Content-Language", "Content-Length", "Last-Modified");
     private final UserDetailsService userDetailsService;
 
     @Bean
@@ -57,6 +53,7 @@ public class ApplicationConfiguration {
         cors.setAllowedMethods(ALLOWED_METHODS);
         cors.setAllowedHeaders(ALLOWED_HEADERS);
         cors.setExposedHeaders(EXPOSED_HEADERS);
+        cors.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", cors);
         return source;

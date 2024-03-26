@@ -11,11 +11,10 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,19 +32,18 @@ public class GroupMessageController {
     @GetMapping("/{countryId}")
     public ResponseEntity<List<GroupMessageDto>> findByCountryIdOrderByCreationDateDesc(
             @PathVariable Long countryId) {
-        List<GroupMessage> groupMessagesByCountryIdOrderByCreationDateDesc
+        List<GroupMessage> countryGroupMessagesByIdOrderByCreationDateDesc
                 = groupMessageService.findByCountryIdOrderByCreationDateDesc(countryId);
         List<GroupMessageDto> groupGroupMessageDtos
-                = groupMessagesByCountryIdOrderByCreationDateDesc.stream()
+                = countryGroupMessagesByIdOrderByCreationDateDesc.stream()
                 .map(groupMessageDtoMapper::mapToDto)
                 .toList();
         return ResponseEntity.ok().body(groupGroupMessageDtos);
     }
 
-   /* @MessageMapping("/group-messages")
-    @SendTo("/topic/group-messages")*/
-    @PostMapping
-    public GroupMessageDto create(@RequestBody GroupMessageRequest groupMessageRequest) {
+    @MessageMapping("/group-messages/{country-name}")
+    @SendTo("/group-message/{country-name}")
+    public GroupMessageDto create(@Payload GroupMessageRequest groupMessageRequest) {
         var groupMessage = groupMessageService.create(groupMessageRequest);
         return groupMessageDtoMapper.mapToDto(groupMessage);
     }

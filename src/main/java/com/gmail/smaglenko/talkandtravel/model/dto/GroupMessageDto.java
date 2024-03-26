@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class GroupMessageDto {
     private Long id;
     private String content;
+    @Builder.Default
     private LocalDateTime creationDate = LocalDateTime.now();
     private Country country;
     private User user;

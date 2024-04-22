@@ -1,6 +1,5 @@
 package com.gmail.smaglenko.talkandtravel.controller;
 
-import com.gmail.smaglenko.talkandtravel.model.Country;
 import com.gmail.smaglenko.talkandtravel.model.dto.CountryDto;
 import com.gmail.smaglenko.talkandtravel.service.CountryService;
 import com.gmail.smaglenko.talkandtravel.util.constants.ApiPathConstants;
@@ -14,9 +13,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,34 +43,18 @@ public class CountryController {
         return ResponseEntity.ok().body(countryDtos);
     }
 
-    @Operation(
-            description = "Create new country."
-    )
-    @PostMapping
-    public ResponseEntity<CountryDto> create(@RequestBody CountryDto dto) {
+    @MessageMapping("/country/create/{country-name}")
+    @SendTo("/group-message/{country-name}")
+    public CountryDto create(@Payload CountryDto dto) {
         var country = countryDtoMapper.mapToModel(dto);
         var newCountry = countryService.create(country, dto.getUserId());
-        var countryDto = countryDtoMapper.mapToDto(newCountry);
-        return ResponseEntity.ok().body(countryDto);
+        return countryDtoMapper.mapToDto(newCountry);
     }
 
-    @Operation(
-            description = "Update existing country."
-    )
-    @PutMapping
-    public ResponseEntity<CountryDto> update(@RequestBody CountryDto dto) {
-        var country = countryService.update(dto.getId(), dto.getUserId());
-        var countryDto = countryDtoMapper.mapToDto(country);
-        return ResponseEntity.ok().body(countryDto);
-    }
-
-    @MessageMapping("/country/{country-name}")
+    @MessageMapping("/country/update/{country-name}")
     @SendTo("/group-message/{country-name}")
-    public CountryDto createOrUpdateCountryForUser(@Payload CountryDto countryDto) {
-        var requestedCountry = countryDtoMapper.mapToModel(countryDto);
-        var country
-                = countryService
-                .createOrUpdateCountryForUser(requestedCountry, countryDto.getUserId());
+    public CountryDto update(@Payload CountryDto dto) {
+        var country = countryService.update(dto.getId(), dto.getUserId());
         return countryDtoMapper.mapToDto(country);
     }
 }

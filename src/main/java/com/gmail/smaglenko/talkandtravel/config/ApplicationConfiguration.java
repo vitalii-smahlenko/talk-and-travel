@@ -48,14 +48,19 @@ public class ApplicationConfiguration {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration cors = createNewCorsConfiguration();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", cors);
+        return source;
+    }
+
+    private CorsConfiguration createNewCorsConfiguration() {
         CorsConfiguration cors = new CorsConfiguration();
         cors.setAllowedOrigins(ALLOWED_ORIGINS);
         cors.setAllowedMethods(ALLOWED_METHODS);
         cors.setAllowedHeaders(ALLOWED_HEADERS);
         cors.setExposedHeaders(EXPOSED_HEADERS);
         cors.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", cors);
-        return source;
+        return cors;
     }
 }

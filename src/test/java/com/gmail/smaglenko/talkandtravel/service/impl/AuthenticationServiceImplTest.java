@@ -2,6 +2,7 @@ package com.gmail.smaglenko.talkandtravel.service.impl;
 
 import com.gmail.smaglenko.talkandtravel.exception.RegistrationException;
 import com.gmail.smaglenko.talkandtravel.model.Avatar;
+import com.gmail.smaglenko.talkandtravel.model.Token;
 import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.model.dto.AuthResponse;
 import com.gmail.smaglenko.talkandtravel.model.dto.UserDto;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -63,13 +65,12 @@ class AuthenticationServiceImplTest {
     }
 
     @Test
-    void register_shouldSaveUserWithCorrectData() throws IOException {
+    void register_shouldSaveUserWithCorrectCredentials() throws IOException {
         when(userService.save(any())).thenReturn(user);
         when(userService.findUserByEmail(USER_EMAIL)).thenReturn(Optional.empty());
         when(emailValidator.isValid(USER_EMAIL)).thenReturn(true);
         when(passwordValidator.isValid(USER_PASSWORD)).thenReturn(true);
         when(avatarService.createDefaultAvatar(USER_NAME)).thenReturn(new Avatar());
-        when(jwtService.generateToken(user)).thenReturn(TEST_TOKEN);
         when(userDtoMapper.mapToDto(user)).thenReturn(userDto);
 
         UserDto expected = creanteNewUserDto();
@@ -133,6 +134,21 @@ class AuthenticationServiceImplTest {
 
         verify(tokenService, times(1)).save(any());
     }
+
+    @Test
+    void login_shouldLoginUserWithCorrectCredentials() {
+        when(userService.findUserByEmail(USER_EMAIL)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(USER_PASSWORD, USER_PASSWORD)).thenReturn(true);
+        when(userDtoMapper.mapToDto(user)).thenReturn(userDto);
+
+        UserDto expected = creanteNewUserDto();
+
+        AuthResponse authResponse = authenticationService.login(user);
+        UserDto actual = authResponse.getUserDto();
+
+        assertEquals(expected, actual);
+    }
+
 
 
     private User createNewUser() {

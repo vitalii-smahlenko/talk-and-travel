@@ -4,7 +4,6 @@ import com.gmail.smaglenko.talkandtravel.model.Country;
 import java.util.List;
 
 public interface CountryService {
-    Country createOrUpdateCountryForUser(Country country, Long userID);
 
     Country create(Country country, Long userID);
 
@@ -17,4 +16,6 @@ public interface CountryService {
     List<Country> getAll();
 
     Long countUsersInCountry(Long countryId);
+
+    List<Country> findAllCountriesByUser(Long userId);
 }

@@ -1,5 +1,6 @@
 package com.gmail.smaglenko.talkandtravel.controller;
 
+import com.gmail.smaglenko.talkandtravel.model.Country;
 import com.gmail.smaglenko.talkandtravel.model.dto.CountryDto;
 import com.gmail.smaglenko.talkandtravel.service.CountryService;
 import com.gmail.smaglenko.talkandtravel.util.constants.ApiPathConstants;
@@ -22,6 +23,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class CountryController {
     private final CountryService countryService;
     private final CountryDtoMapper countryDtoMapper;
+
+    @Operation(
+            description = "Find all countries where the user is a participant"
+    )
+    @GetMapping("/all-by-user/{userId}/participating")
+    public ResponseEntity<List<CountryDto>> findCountriesByUserId(@PathVariable Long userId) {
+        List<Country> countriesByUserId = countryService.findAllCountriesByUser(userId);
+        List<CountryDto> responseCountryDtos
+                = countriesByUserId.stream()
+                .map(countryDtoMapper::mapToDto)
+                .toList();
+        return ResponseEntity.ok().body(responseCountryDtos);
+    }
 
     @Operation(
             description = "Get the quantity of participants in the country."

@@ -46,14 +46,10 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    @Transactional
-    public Country createOrUpdateCountryForUser(Country country, Long userId) {
-        var user = userService.findById(userId);
-        Country existingCountry = getCountry(country);
-        var participant = getParticipant(existingCountry.getId(), userId);
-        joinCountry(existingCountry, participant);
-        var savedCountry = save(existingCountry);
-        return detachCountryFields(savedCountry);
+    public List<Country> findAllCountriesByUser(Long userId) {
+        return repository.findCountriesByUserId(userId).orElseThrow(
+                () -> new NoSuchElementException("The User is not a participant of any Country")
+        );
     }
 
     @Override
@@ -82,11 +78,6 @@ public class CountryServiceImpl implements CountryService {
         var user = userService.findById(userId);
         return participantService.findByUserIdAndCountryId(userId, countryId)
                 .orElseGet(() -> participantService.create(user));
-    }
-
-    private Country getCountry(Country country) {
-        return repository.findByName(country.getName())
-                .orElseGet(() -> createNewCountry(country));
     }
 
     private Country getCountry(Long countryId) {

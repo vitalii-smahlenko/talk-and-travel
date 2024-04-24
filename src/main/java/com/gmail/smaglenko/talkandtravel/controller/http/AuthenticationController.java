@@ -1,4 +1,4 @@
-package com.gmail.smaglenko.talkandtravel.controller;
+package com.gmail.smaglenko.talkandtravel.controller.http;
 
 import com.gmail.smaglenko.talkandtravel.model.dto.AuthResponse;
 import com.gmail.smaglenko.talkandtravel.model.dto.UserDto;

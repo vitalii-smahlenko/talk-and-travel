@@ -45,10 +45,11 @@ public class SecurityConfiguration {
                                 .requestMatchers(POST, "/api/countries/", "/api/messages/",
                                         "/api/avatars")
                                 .hasAnyAuthority(USER.name())
-                                .requestMatchers(PUT, "/api/users/", "/api/countries/")
+                                .requestMatchers(PUT, "/api/users/", "/api/countries/",
+                                        "/api/participants/")
                                 .hasAnyAuthority(USER.name())
-                                .requestMatchers(GET, "/api/users/", "/api/participants/",
-                                        "/api/countries/", "/api/messages/")
+                                .requestMatchers(GET, "/api/users/", "/api/countries/",
+                                        "/api/messages/")
                                 .hasAnyAuthority(USER.name())
                                 .anyRequest()
                                 .authenticated()

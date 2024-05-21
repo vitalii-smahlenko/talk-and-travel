@@ -28,6 +28,7 @@ public class SecurityConfiguration {
             "/api/authentication/**",
             "/swagger-ui/**",
             "/v3/**",
+            "/api/users/exists-by-email/**",
             "/ws/", "/ws/**"};
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationProvider authenticationProvider;

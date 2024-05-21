@@ -42,9 +42,7 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public List<Country> getAll() {
-        return repository.findAll().stream()
-                .map(this::detachCountryFields)
-                .toList();
+        return repository.findAll();
     }
 
     @Override
@@ -67,8 +65,7 @@ public class CountryServiceImpl implements CountryService {
         var participant = participantService.create(user);
         var newCountry = createNewCountry(country);
         joinCountry(newCountry, participant);
-        var savedCountry = save(newCountry);
-        return detachCountryFields(savedCountry);
+        return save(newCountry);
     }
 
     @Override
@@ -77,8 +74,7 @@ public class CountryServiceImpl implements CountryService {
         var country = getCountry(countryId);
         var participant = getParticipant(countryId, userId);
         joinCountry(country, participant);
-        var savedCountry = repository.save(country);
-        return detachCountryFields(savedCountry);
+        return repository.save(country);
     }
 
     private Participant getParticipant(Long countryId, Long userId) {
@@ -98,14 +94,6 @@ public class CountryServiceImpl implements CountryService {
         if (existingCountry.isPresent()) {
             throw new RuntimeException("Country already exist");
         }
-    }
-
-    private Country detachCountryFields(Country country) {
-        return Country.builder()
-                .id(country.getId())
-                .name(country.getName())
-                .flagCode(country.getFlagCode())
-                .build();
     }
 
     private void joinCountry(Country country, Participant participant) {

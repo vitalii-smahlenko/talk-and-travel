@@ -1,9 +1,11 @@
 package com.gmail.smaglenko.talkandtravel.service.impl;
 
 import com.gmail.smaglenko.talkandtravel.exception.AuthenticationException;
+import com.gmail.smaglenko.talkandtravel.exception.RegistrationException;
 import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.repository.UserRepository;
 import com.gmail.smaglenko.talkandtravel.service.UserService;
+import com.gmail.smaglenko.talkandtravel.util.validator.UserEmailValidator;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
+    private final UserEmailValidator emailValidator;
 
     @Override
     public User save(User user) throws IOException {
@@ -27,8 +30,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(User user) {
-        checkDuplicateEmail(user);
-        transferSecurityInfoFromExistingUser(user);
+        var existingUser = findUserById(user.getId());
+        processEmailChange(user,existingUser);
+        updateSecurityInfo(user, existingUser);
         return repository.save(user);
     }
 
@@ -44,23 +48,43 @@ public class UserServiceImpl implements UserService {
         );
     }
 
-    private void transferSecurityInfoFromExistingUser(User user) {
-        var existingUser = findUserById(user);
+    private User findUserById(Long userId) {
+        return repository.findById(userId)
+                .orElseThrow(
+                        () -> new NoSuchElementException("Can not find user by ID: " + userId)
+                );
+    }
+
+    private void updateSecurityInfo(User user, User existingUser) {
         user.setPassword(existingUser.getPassword());
         user.setRole(existingUser.getRole());
     }
 
-    private void checkDuplicateEmail(User user) {
-        var userByEmail = findUserByEmail(user.getUserEmail());
+    private void processEmailChange(User user,User existingUser) {
+        if (isEmailChanged(existingUser.getUserEmail(), user.getUserEmail())) {
+            validateNewEmail(user.getUserEmail());
+        }
+    }
+
+    private void checkDuplicateEmail(String email) {
+        var userByEmail = findUserByEmail(email);
         if (userByEmail.isPresent()) {
             throw new AuthenticationException("A user with this email already exists");
         }
     }
 
-    private User findUserById(User user) {
-        return repository.findById(user.getId())
-                .orElseThrow(
-                        () -> new NoSuchElementException("Can not find user by ID: " + user.getId())
-                );
+    private void validateNewEmail(String newEmail) {
+        checkDuplicateEmail(newEmail);
+        validateEmailFormat(newEmail);
+    }
+
+    private void validateEmailFormat(String email) {
+        if (!emailValidator.isValid(email)) {
+            throw new RegistrationException("Invalid email address");
+        }
+    }
+
+    public boolean isEmailChanged(String oldEmail, String newEmail) {
+        return newEmail != null && !oldEmail.equals(newEmail);
     }
 }

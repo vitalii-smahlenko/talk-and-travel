@@ -5,6 +5,7 @@ import com.gmail.smaglenko.talkandtravel.service.CountryService;
 import com.gmail.smaglenko.talkandtravel.util.mapper.CountryDtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -15,6 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class CountryWebSocketController {
     private final CountryService countryService;
     private final CountryDtoMapper countryDtoMapper;
+
+    @MessageMapping("/country/find-by-name/{countryName}")
+    @SendTo("/group-message/{countryName}")
+    public ResponseEntity<CountryDto> findById(@DestinationVariable String countryName) {
+        var country = countryService.findByName(countryName);
+        var countryDto = countryDtoMapper.mapToDto(country);
+        return ResponseEntity.ok().body(countryDto);
+    }
 
     @MessageMapping("/country/create/{country-name}")
     @SendTo("/group-message/{country-name}")
@@ -27,9 +36,10 @@ public class CountryWebSocketController {
 
     @MessageMapping("/country/update/{country-name}")
     @SendTo("/group-message/{country-name}")
-    public CountryDto update(@Payload CountryDto dto) {
+    public ResponseEntity<CountryDto> update(@Payload CountryDto dto) {
         var country = countryService.update(dto.getId(), dto.getUserId());
-        return countryDtoMapper.mapToDto(country);
+        var countryDto = countryDtoMapper.mapToDto(country);
+        return ResponseEntity.ok().body(countryDto);
     }
 }
 

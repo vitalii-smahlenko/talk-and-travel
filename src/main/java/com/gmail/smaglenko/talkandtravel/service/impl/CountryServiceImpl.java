@@ -34,6 +34,13 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
+    public Country findByName(String countryMame) {
+        return repository.findByName(countryMame).orElseThrow(
+                () -> new NoSuchElementException("Can not find Country by mane " + countryMame)
+        );
+    }
+
+    @Override
     public List<Country> getAll() {
         return repository.findAll().stream()
                 .map(this::detachCountryFields)
@@ -59,7 +66,7 @@ public class CountryServiceImpl implements CountryService {
         var user = userService.findById(userId);
         var participant = participantService.create(user);
         var newCountry = createNewCountry(country);
-        joinCountry(newCountry,participant);
+        joinCountry(newCountry, participant);
         var savedCountry = save(newCountry);
         return detachCountryFields(savedCountry);
     }

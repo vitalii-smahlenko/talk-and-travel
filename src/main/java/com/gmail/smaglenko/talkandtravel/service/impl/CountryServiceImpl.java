@@ -2,10 +2,12 @@ package com.gmail.smaglenko.talkandtravel.service.impl;
 
 import com.gmail.smaglenko.talkandtravel.model.Country;
 import com.gmail.smaglenko.talkandtravel.model.Participant;
+import com.gmail.smaglenko.talkandtravel.model.User;
 import com.gmail.smaglenko.talkandtravel.repository.CountryRepository;
 import com.gmail.smaglenko.talkandtravel.service.CountryService;
 import com.gmail.smaglenko.talkandtravel.service.ParticipantService;
 import com.gmail.smaglenko.talkandtravel.service.UserService;
+import com.gmail.smaglenko.talkandtravel.util.mapper.UserDtoMapper;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -35,14 +37,26 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public Country findByName(String countryMame) {
-        return repository.findByName(countryMame).orElseThrow(
+        Country country = repository.findByName(countryMame).orElseThrow(
                 () -> new NoSuchElementException("Can not find Country by mane " + countryMame)
         );
+        return getIdNameAndFlagCode(country);
+    }
+
+    private Country getIdNameAndFlagCode(Country country) {
+        return Country
+                .builder()
+                .id(country.getId())
+                .name(country.getName())
+                .flagCode(country.getFlagCode())
+                .build();
     }
 
     @Override
     public List<Country> getAll() {
-        return repository.findAll();
+        return repository.findAll().stream()
+                .map(this::detachCountryFields)
+                .toList();
     }
 
     @Override
@@ -65,7 +79,8 @@ public class CountryServiceImpl implements CountryService {
         var participant = participantService.create(user);
         var newCountry = createNewCountry(country);
         joinCountry(newCountry, participant);
-        return save(newCountry);
+        var savedCountry = repository.save(newCountry);
+        return detachCountryFields(savedCountry);
     }
 
     @Override
@@ -74,7 +89,23 @@ public class CountryServiceImpl implements CountryService {
         var country = getCountry(countryId);
         var participant = getParticipant(countryId, userId);
         joinCountry(country, participant);
-        return repository.save(country);
+        var savedCountry = repository.save(country);
+        return detachCountryFields(savedCountry);
+    }
+
+    private Country detachCountryFields(Country country) {
+        nullifyUserTokensAndPassword(country);
+        return country;
+    }
+
+    private void nullifyUserTokensAndPassword(Country country) {
+        country.getParticipants().forEach(p -> {
+            User user = p.getUser();
+            if (user != null) {
+                user.setTokens(null);
+                user.setPassword(null);
+            }
+        });
     }
 
     private Participant getParticipant(Long countryId, Long userId) {

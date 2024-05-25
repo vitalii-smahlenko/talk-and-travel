@@ -20,7 +20,8 @@ public class ApplicationConfiguration {
     private final List<String> ALLOWED_ORIGINS = Arrays.asList(
             "http://localhost:3001",
             "http://localhost:3000",
-            "https://cheredniknatalya.github.io",
+            "http://localhost:8080",
+            "http://localhost:63342",
             "https://reginavarybrus.github.io"
     );
     private final List<String> ALLOWED_METHODS = Arrays.asList(

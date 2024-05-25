@@ -41,4 +41,13 @@ public class UserController {
         var userDto = userDtoMapper.mapToDto(user);
         return ResponseEntity.ok().body(userDto);
     }
+
+    @Operation(
+            description = "Check if email exists."
+    )
+    @GetMapping("/exists-by-email/{email}")
+    public ResponseEntity<Boolean> existsByEmail(@PathVariable String email) {
+        boolean exists = userService.existsByEmail(email);
+        return ResponseEntity.ok().body(exists);
+    }
 }

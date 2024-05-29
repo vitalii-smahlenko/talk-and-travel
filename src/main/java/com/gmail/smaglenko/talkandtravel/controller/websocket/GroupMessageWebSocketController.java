@@ -1,7 +1,7 @@
 package com.gmail.smaglenko.talkandtravel.controller.websocket;
 
 import com.gmail.smaglenko.talkandtravel.model.dto.GroupMessageDto;
-import com.gmail.smaglenko.talkandtravel.model.dto.GroupMessageRequest;
+import com.gmail.smaglenko.talkandtravel.model.dto.GroupMessageRequestDto;
 import com.gmail.smaglenko.talkandtravel.service.GroupMessageService;
 import com.gmail.smaglenko.talkandtravel.util.mapper.GroupMessageDtoMapper;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +19,8 @@ public class GroupMessageWebSocketController {
 
     @MessageMapping("/group-messages/{country-name}")
     @SendTo("/group-message/{country-name}")
-    public ResponseEntity<GroupMessageDto> create(@Payload GroupMessageRequest groupMessageRequest) {
-        var groupMessage = groupMessageService.create(groupMessageRequest);
+    public ResponseEntity<GroupMessageDto> create(@Payload GroupMessageRequestDto groupMessageRequestDto) {
+        var groupMessage = groupMessageService.create(groupMessageRequestDto);
         var groupMessageDto = groupMessageDtoMapper.mapToDto(groupMessage);
         return ResponseEntity.ok().body(groupMessageDto);
     }

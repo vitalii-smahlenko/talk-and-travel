@@ -1,7 +1,7 @@
 package com.gmail.smaglenko.talkandtravel.service.impl;
 
 import com.gmail.smaglenko.talkandtravel.model.GroupMessage;
-import com.gmail.smaglenko.talkandtravel.model.dto.GroupMessageRequest;
+import com.gmail.smaglenko.talkandtravel.model.dto.GroupMessageRequestDto;
 import com.gmail.smaglenko.talkandtravel.repository.GroupMessageRepository;
 import com.gmail.smaglenko.talkandtravel.service.CountryService;
 import com.gmail.smaglenko.talkandtravel.service.GroupMessageService;
@@ -25,8 +25,8 @@ public class GroupMessageServiceImpl implements GroupMessageService {
 
     @Override
     @Transactional
-    public GroupMessage create(GroupMessageRequest groupMessageRequest) {
-        var groupMessage = createGroupMessageFromRequest(groupMessageRequest);
+    public GroupMessage create(GroupMessageRequestDto groupMessageRequestDto) {
+        var groupMessage = createGroupMessageFromRequest(groupMessageRequestDto);
         var savedGroupMessage = save(groupMessage);
         return detachGroupMessageFields(savedGroupMessage);
     }
@@ -48,11 +48,11 @@ public class GroupMessageServiceImpl implements GroupMessageService {
                 .build();
     }
 
-    private GroupMessage createGroupMessageFromRequest(GroupMessageRequest groupMessageRequest) {
-        var user = userService.findById(groupMessageRequest.getSenderId());
-        var country = countryService.findById(groupMessageRequest.getCountryId());
+    private GroupMessage createGroupMessageFromRequest(GroupMessageRequestDto groupMessageRequestDto) {
+        var user = userService.findById(groupMessageRequestDto.getSenderId());
+        var country = countryService.findById(groupMessageRequestDto.getCountryId());
         return GroupMessage.builder()
-                .content(groupMessageRequest.getContent())
+                .content(groupMessageRequestDto.getContent())
                 .user(user)
                 .country(country)
                 .build();

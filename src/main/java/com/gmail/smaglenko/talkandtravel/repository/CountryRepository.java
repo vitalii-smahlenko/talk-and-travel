@@ -10,7 +10,19 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CountryRepository extends JpaRepository<Country, Long> {
-    Optional<Country> findByName(String name);
+    @Query("SELECT c "
+            + "FROM Country c "
+            + "LEFT JOIN FETCH c.groupMessages "
+            + "LEFT JOIN FETCH c.participants "
+            + "ORDER BY c.name")
+    List<Country> findAllSortedByName();
+
+    @Query("SELECT c "
+            + "FROM Country c "
+            + "LEFT JOIN FETCH c.groupMessages "
+            + "LEFT JOIN FETCH c.participants "
+            + "WHERE c.name = :name")
+    Optional<Country> findByName(@Param("name") String name);
 
     @Query("SELECT COUNT (DISTINCT p.user.id) "
             + "FROM  Participant p "
@@ -23,4 +35,11 @@ public interface CountryRepository extends JpaRepository<Country, Long> {
             + "JOIN p.countries c "
             + "WHERE p.user.id = :userId")
     Optional<List<Country>> findCountriesByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT c "
+            + "FROM Country c "
+            + "LEFT JOIN FETCH c.groupMessages "
+            + "LEFT JOIN FETCH c.participants "
+            + "WHERE c.id = :id")
+    Optional<Country> findById(@Param("id") Long id);
 }

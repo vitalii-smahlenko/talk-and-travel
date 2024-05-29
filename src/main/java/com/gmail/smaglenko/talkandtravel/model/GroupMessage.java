@@ -1,5 +1,6 @@
 package com.gmail.smaglenko.talkandtravel.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,11 +37,11 @@ public class GroupMessage {
     private LocalDateTime creationDate;
     @ManyToOne
     @JoinColumn(name = "country_id", nullable = false)
+    @JsonIgnore
     private Country country;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
     @PrePersist
     protected void onCreate() {
         creationDate = LocalDateTime.now();

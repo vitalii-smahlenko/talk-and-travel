@@ -36,3 +36,5 @@ build/
 application-environment.properties
 
 http-request.http
+
+src/main/resources/static

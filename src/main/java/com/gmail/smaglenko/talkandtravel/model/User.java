@@ -1,5 +1,6 @@
 package com.gmail.smaglenko.talkandtravel.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,6 +36,7 @@ public class User {
     @Column(nullable = false)
     private String userEmail;
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
     @Transient
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
@@ -44,9 +46,9 @@ public class User {
     @Size(min = 10, max = 500, message = "Maximum number of characters for About 500")
     private String about;
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Participant> participatedCountries;
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Token> tokens;
 }
-
-

@@ -18,15 +18,15 @@ public class CountryWebSocketController {
     private final CountryDtoMapper countryDtoMapper;
 
     @MessageMapping("/country/find-by-name/{countryName}")
-    @SendTo("/group-message/{countryName}")
+    @SendTo("/countries/{countryName}")
     public ResponseEntity<CountryDto> findById(@DestinationVariable String countryName) {
         var country = countryService.findByName(countryName);
         var countryDto = countryDtoMapper.mapToDto(country);
         return ResponseEntity.ok().body(countryDto);
     }
 
-    @MessageMapping("/country/create/{countryName}")
-    @SendTo("/group-message/{countryName}")
+    @MessageMapping("/countries/create/{countryName}")
+    @SendTo("/countries/{countryName}")
     public ResponseEntity<CountryDto> create(@Payload CountryDto dto) {
         var country = countryDtoMapper.mapToModel(dto);
         var newCountry = countryService.create(country, dto.getUserId());
@@ -34,8 +34,8 @@ public class CountryWebSocketController {
         return ResponseEntity.ok().body(countryDto);
     }
 
-    @MessageMapping("/country/update/{countryName}")
-    @SendTo("/group-message/{countryName}")
+    @MessageMapping("/countries/update/{countryName}")
+    @SendTo("/countries/{countryName}")
     public ResponseEntity<CountryDto> update(@Payload CountryDto dto) {
         var country = countryService.update(dto.getId(), dto.getUserId());
         var countryDto = countryDtoMapper.mapToDto(country);

@@ -24,3 +24,7 @@ Technologies
 - Lombok
 - MapStruct
 - Swagger https://talk-and-travel.pp.ua/swagger-ui/index.html#/
+
+Our production
+-
+https://reginavarybrus.github.io/talk-and-travel-chat/

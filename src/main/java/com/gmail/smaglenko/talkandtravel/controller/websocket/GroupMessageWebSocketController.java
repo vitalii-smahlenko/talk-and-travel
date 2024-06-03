@@ -18,7 +18,7 @@ public class GroupMessageWebSocketController {
     private final GroupMessageDtoMapper groupMessageDtoMapper;
 
     @MessageMapping("/group-messages/{country-name}")
-    @SendTo("/group-message/{country-name}")
+    @SendTo("/group-messages/{country-name}")
     public ResponseEntity<GroupMessageDto> create(@Payload GroupMessageRequestDto groupMessageRequestDto) {
         var groupMessage = groupMessageService.create(groupMessageRequestDto);
         var groupMessageDto = groupMessageDtoMapper.mapToDto(groupMessage);

@@ -2,6 +2,7 @@ package com.gmail.smaglenko.talkandtravel.controller.http;
 
 import com.gmail.smaglenko.talkandtravel.model.Country;
 import com.gmail.smaglenko.talkandtravel.model.dto.CountryDto;
+import com.gmail.smaglenko.talkandtravel.model.dto.CountryWithUserDto;
 import com.gmail.smaglenko.talkandtravel.service.CountryService;
 import com.gmail.smaglenko.talkandtravel.util.constants.ApiPathConstants;
 import com.gmail.smaglenko.talkandtravel.util.mapper.CountryDtoMapper;
@@ -62,5 +63,14 @@ public class CountryController {
                 .map(countryDtoMapper::mapToDto)
                 .toList();
         return ResponseEntity.ok().body(responseCountryDtos);
+    }
+
+    @Operation(
+            description = "Get Country by ID with users instead of participants."
+    )
+    @GetMapping("/{countryId}/with-users")
+    public ResponseEntity<CountryWithUserDto> findByIdWithUsers(@PathVariable Long countryId) {
+        CountryWithUserDto countryWithUserDto = countryService.findByIdWithParticipants(countryId);
+        return ResponseEntity.ok().body(countryWithUserDto);
     }
 }

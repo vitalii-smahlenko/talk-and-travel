@@ -2,6 +2,7 @@ package com.gmail.smaglenko.talkandtravel.controller.http;
 
 import com.gmail.smaglenko.talkandtravel.model.GroupMessage;
 import com.gmail.smaglenko.talkandtravel.model.dto.GroupMessageDto;
+import com.gmail.smaglenko.talkandtravel.model.dto.GroupMessageRequestDto;
 import com.gmail.smaglenko.talkandtravel.service.GroupMessageService;
 import com.gmail.smaglenko.talkandtravel.util.constants.ApiPathConstants;
 import com.gmail.smaglenko.talkandtravel.util.mapper.GroupMessageDtoMapper;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,5 +38,15 @@ public class GroupMessageController {
                 .map(groupMessageDtoMapper::mapToDto)
                 .toList();
         return ResponseEntity.ok().body(groupGroupMessageDtos);
+    }
+
+    @Operation(
+            description = "Create GroupMessage"
+    )
+    @PostMapping
+    public ResponseEntity<GroupMessageDto> create(@RequestBody GroupMessageRequestDto groupMessageRequestDto) {
+        var groupMessage = groupMessageService.create(groupMessageRequestDto);
+        var groupMessageDto = groupMessageDtoMapper.mapToDto(groupMessage);
+        return ResponseEntity.ok().body(groupMessageDto);
     }
 }

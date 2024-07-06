@@ -2,6 +2,9 @@ package com.gmail.smaglenko.talkandtravel.service.impl;
 
 import com.gmail.smaglenko.talkandtravel.model.Country;
 import com.gmail.smaglenko.talkandtravel.model.Participant;
+import com.gmail.smaglenko.talkandtravel.model.User;
+import com.gmail.smaglenko.talkandtravel.model.dto.CountryWithUserDto;
+import com.gmail.smaglenko.talkandtravel.model.dto.UserDto;
 import com.gmail.smaglenko.talkandtravel.repository.CountryRepository;
 import com.gmail.smaglenko.talkandtravel.service.CountryService;
 import com.gmail.smaglenko.talkandtravel.service.ParticipantService;
@@ -10,6 +13,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +64,7 @@ public class CountryServiceImpl implements CountryService {
         );
     }
 
+
     @Override
     @Transactional
     public Country create(Country country, Long userId) {
@@ -78,6 +84,48 @@ public class CountryServiceImpl implements CountryService {
         joinCountry(country, participant);
         return repository.save(country);
     }
+
+    @Override
+    @Transactional
+    public CountryWithUserDto findByIdWithParticipants(Long countryId) {
+        Country country = findCountryByIdWithParticipants(countryId);
+        Set<UserDto> userDtos = mapParticipantsToUserDtos(country);
+        return buildCountryWithUserDto(country, userDtos);
+    }
+
+    private CountryWithUserDto buildCountryWithUserDto(Country country, Set<UserDto> userDtos) {
+        return CountryWithUserDto.builder()
+                .id(country.getId())
+                .name(country.getName())
+                .flagCode(country.getFlagCode())
+                .groupMessages(country.getGroupMessages())
+                .participants(userDtos)
+                .build();
+    }
+
+    private Set<UserDto> mapParticipantsToUserDtos(Country country) {
+        return country.getParticipants().stream()
+                .map(this::mapParticipantToUserDto)
+                .collect(Collectors.toSet());
+    }
+
+    private UserDto mapParticipantToUserDto(Participant participant) {
+        User user = participant.getUser();
+        return UserDto.builder()
+                .id(user.getId())
+                .userName(user.getUserName())
+                .userEmail(user.getUserEmail())
+                .avatar(user.getAvatar())
+                .about(user.getAbout())
+                .build();
+    }
+
+    private Country findCountryByIdWithParticipants(Long countryId) {
+        return repository.findByIdWithParticipants(countryId).orElseThrow(
+                () -> new NoSuchElementException("Can not find Country by id " + countryId)
+        );
+    }
+
 
     private Participant getParticipant(Long countryId, Long userId) {
         var user = userService.findById(userId);

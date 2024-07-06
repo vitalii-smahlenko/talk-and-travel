@@ -17,9 +17,9 @@ public class CountryWebSocketController {
     private final CountryService countryService;
     private final CountryDtoMapper countryDtoMapper;
 
-    @MessageMapping("/country/find-by-name/{countryName}")
+    @MessageMapping("/countries/find-by-name/{countryName}")
     @SendTo("/countries/{countryName}")
-    public ResponseEntity<CountryDto> findById(@DestinationVariable String countryName) {
+    public ResponseEntity<CountryDto> findByName(@DestinationVariable String countryName) {
         var country = countryService.findByName(countryName);
         var countryDto = countryDtoMapper.mapToDto(country);
         return ResponseEntity.ok().body(countryDto);

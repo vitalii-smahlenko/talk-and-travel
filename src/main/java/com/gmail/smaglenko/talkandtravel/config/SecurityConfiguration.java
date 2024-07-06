@@ -43,14 +43,14 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
-                                .requestMatchers(POST, "/api/countries/", "/api/messages/",
-                                        "/api/avatars")
+                                .requestMatchers(POST, "/api/countries/", "/api/avatars",
+                                        "/api/group-messages/")
                                 .hasAnyAuthority(USER.name())
                                 .requestMatchers(PUT, "/api/users/", "/api/countries/",
                                         "/api/participants/")
                                 .hasAnyAuthority(USER.name())
                                 .requestMatchers(GET, "/api/users/", "/api/countries/",
-                                        "/api/messages/")
+                                        "/api/group-messages/")
                                 .hasAnyAuthority(USER.name())
                                 .anyRequest()
                                 .authenticated()

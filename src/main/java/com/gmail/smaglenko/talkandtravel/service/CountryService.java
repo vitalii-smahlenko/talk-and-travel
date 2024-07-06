@@ -1,6 +1,7 @@
 package com.gmail.smaglenko.talkandtravel.service;
 
 import com.gmail.smaglenko.talkandtravel.model.Country;
+import com.gmail.smaglenko.talkandtravel.model.dto.CountryWithUserDto;
 import java.util.List;
 
 public interface CountryService {
@@ -20,4 +21,6 @@ public interface CountryService {
     Long countUsersInCountry(Long countryId);
 
     List<Country> findAllCountriesByUser(Long userId);
+
+    CountryWithUserDto findByIdWithParticipants(Long countryId);
 }
